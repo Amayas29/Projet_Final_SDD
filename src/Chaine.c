@@ -57,7 +57,7 @@ Chaines* lectureChaines(FILE *file) {
 
         for(int i = 0; buffer[i]; i++) {
 
-            if(nb_points_lu == nb_points)
+            if(nb_points_lu > nb_points)
                 break;
             
             /* Pour ignorer les valeurs du numero de la chaine et nombre de points*/
@@ -72,22 +72,24 @@ Chaines* lectureChaines(FILE *file) {
             char X[BUFSIZ];
             j = 0;
             printf("Taille : %ld, i : %d", strlen(buffer), i);
-            while(buffer[i] != '\0' && buffer[i] != ' ')
-                X[ j++ ] = buffer[i++];
+            while(buffer[i] && buffer[i] != ' ')
+                X[j++] = buffer[i++];
 
             X[j] = '\0';
             
             /* On ignore les espaces entre les points (SI une suite d'espace est introduite dans le fichier) */
-            while(buffer[i] != '\0' && buffer[i++] == ' ');
+            while(buffer[i] && buffer[i++] == ' ');
 
             /* On réccupere la valeur Y du point */
             char Y[BUFSIZ];
             j = 0;
-            while(buffer[i] != '\0' && buffer[i] != ' ')
+            while(buffer[i] && buffer[i] != ' ')
                 Y[ j++ ] = buffer[i++];
 
             Y[j] = '\0';
 
+
+            printf("%s %s\n", X, Y);
             /* On convertis les valeur lu en double */
             x = atof(X);
             y = atof(Y);
@@ -119,7 +121,7 @@ Chaines* lectureChaines(FILE *file) {
         /* On ajoute la chaine en tete de liste de la liste des chaines */
         chaine->points = points;
         chaine->numero = numero_chaine;
-        
+
         chaine->suiv = graphe->chaines;
         graphe->chaines = chaine;
 
