@@ -132,13 +132,13 @@ void ecrireChaines(Chaines *C, FILE *file) {
     /* Verification du fichier */ 
     if(!file) {
         print_probleme("Fichier introuvable");
-        return NULL;
+        return;
     }
 
     /* Verification de la liste */
     if(!C) {
         print_probleme("Pointeur invalide");
-        return NULL;
+        return;
     }
 
     fprintf(file, "NbChain: %d\nGamma: %d\n", C->nbChaines, C->gamma);
@@ -157,7 +157,6 @@ void ecrireChaines(Chaines *C, FILE *file) {
         fprintf(file, "\n");
     }
 }
-
 
 void afficheChainesSVG(Chaines *C, char* nomInstance);
 double longueurTotale(Chaines *C);
