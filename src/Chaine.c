@@ -62,9 +62,10 @@ Chaines* lectureChaines(FILE *file) {
             
             /* Pour ignorer les valeurs du numero de la chaine et nombre de points*/
             if(espaces < 2) {
-                if(buffer[i] == ' ')
+                if(buffer[i++] == ' ') {
                     espaces++;
-                i++;
+                    while(buffer[i] && buffer[i] == ' ') i++;
+                }
                 continue;
             }
 
