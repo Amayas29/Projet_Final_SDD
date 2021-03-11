@@ -55,7 +55,7 @@ Chaines* lectureChaines(FILE *file) {
         int espaces = 0;
         int nb_points_lu = 0;
 
-        for(int i = 0; buffer[i]; i++) {
+        for(int i = 0; buffer[i]; ) {
 
             if(nb_points_lu > nb_points)
                 break;
@@ -64,21 +64,25 @@ Chaines* lectureChaines(FILE *file) {
             if(espaces < 2) {
                 if(buffer[i] == ' ')
                     espaces++;
-                while(buffer[i++] == ' ');
+                i++;
                 continue;
             }
+
+            while(buffer[i] && buffer[i] == ' ') i++;
 
             /* On réccupere la valeur X du point */
             char X[BUFSIZ];
             j = 0;
-            printf("Taille : %ld, i : %d", strlen(buffer), i);
             while(buffer[i] && buffer[i] != ' ')
                 X[j++] = buffer[i++];
+
+            if(j == 0) break;
 
             X[j] = '\0';
             
             /* On ignore les espaces entre les points (SI une suite d'espace est introduite dans le fichier) */
-            while(buffer[i] && buffer[i++] == ' ');
+            while(buffer[i] && buffer[i] == ' ') i++;
+            
 
             /* On réccupere la valeur Y du point */
             char Y[BUFSIZ];
@@ -86,10 +90,9 @@ Chaines* lectureChaines(FILE *file) {
             while(buffer[i] && buffer[i] != ' ')
                 Y[ j++ ] = buffer[i++];
 
+            if(j == 0) break;
             Y[j] = '\0';
 
-
-            printf("%s %s\n", X, Y);
             /* On convertis les valeur lu en double */
             x = atof(X);
             y = atof(Y);
@@ -157,7 +160,7 @@ void ecrireChaines(Chaines *C, FILE *file) {
         fprintf(file, "%d %d ", chaines->numero, nb_points);
 
         for(CellPoint *points = chaines->points; points; points = points->suiv)
-            fprintf(file, "%le %le ", points->x, points->y);
+            fprintf(file, "%.2f %.2f ", points->x, points->y);
 
         fprintf(file, "\n");
     }
