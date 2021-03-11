@@ -71,18 +71,19 @@ Chaines* lectureChaines(FILE *file) {
             /* On réccupere la valeur X du point */
             char X[BUFSIZ];
             j = 0;
-            while(buffer[i] != ' ')
+            printf("Taille : %ld, i : %d", strlen(buffer), i);
+            while(buffer[i] != '\0' && buffer[i] != ' ')
                 X[ j++ ] = buffer[i++];
 
             X[j] = '\0';
             
             /* On ignore les espaces entre les points (SI une suite d'espace est introduite dans le fichier) */
-            while(buffer[i++] == ' ');
+            while(buffer[i] != '\0' && buffer[i++] == ' ');
 
             /* On réccupere la valeur Y du point */
             char Y[BUFSIZ];
             j = 0;
-            while(buffer[i] != ' ')
+            while(buffer[i] != '\0' && buffer[i] != ' ')
                 Y[ j++ ] = buffer[i++];
 
             Y[j] = '\0';
