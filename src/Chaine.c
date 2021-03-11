@@ -117,9 +117,9 @@ Chaines* lectureChaines(FILE *file) {
 
         /* On ajoute la chaine en tete de liste de la liste des chaines */
         chaine->points = points;
-        chaine->suiv = graphe;
+        chaine->suiv = graphe->chaines;
         graphe->chaines = chaine;
-        
+
         nb++;
     }
 
@@ -127,7 +127,36 @@ Chaines* lectureChaines(FILE *file) {
     return graphe;
 }
 
-void ecrireChaines(Chaines *C, FILE *file);
+void ecrireChaines(Chaines *C, FILE *file) {
+
+    /* Verification du fichier */ 
+    if(!file) {
+        print_probleme("Fichier introuvable");
+        return NULL;
+    }
+
+    /* Verification de la liste */
+    if(!C) {
+        print_probleme("Pointeur invalide");
+        return NULL;
+    }
+
+    fprintf(file, "NbChain: %d\nGamma: %d\n", C->nbChaines, C->gamma);
+
+    int nb_points;
+    for(CellChaine *chaines = C->chaines;  chaines; chaines = chaines->suiv) {
+
+        nb_points = 0;
+        for(CellPoint *points = chaines->points; points; points = points->suiv, nb_points++);
+
+        fprintf(file, "%d %d ", chaines->numero, nb_points);
+
+        for(CellPoint *points = chaines->points; points; points = points->suiv)
+            fprintf(file, "%le %le ", points->x, points->y);
+
+        fprintf(file, "\n");
+    }
+}
 
 
 void afficheChainesSVG(Chaines *C, char* nomInstance);
