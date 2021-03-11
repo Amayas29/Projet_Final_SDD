@@ -118,6 +118,8 @@ Chaines* lectureChaines(FILE *file) {
 
         /* On ajoute la chaine en tete de liste de la liste des chaines */
         chaine->points = points;
+        chaine->numero = numero_chaine;
+        
         chaine->suiv = graphe->chaines;
         graphe->chaines = chaine;
 
