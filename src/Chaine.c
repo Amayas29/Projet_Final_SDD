@@ -244,6 +244,13 @@ double longueurChaine(CellChaine *C) {
     return longeur;
 }
 
+/* Calcule la longeur physique totales des chaines */
+double longeurTotale(Chaines *C) {
+    double total = 0;
+    for(CellChaine *cell = C->chaines; cell; total += longueurChaine(cell), cell = cell->suiv);
+    return total;
+}
+
 /* Calcule le nombre de points d'une chaine */
 int comptePointsChaines(CellChaine *C) {
     int nb_points = 0;
@@ -258,13 +265,6 @@ int comptePointsChaines(CellChaine *C) {
 int comptePointsTotal(Chaines *C) {
     int total = 0;
     for(CellChaine *cell = C->chaines; cell; total += comptePointsChaines(cell), cell = cell->suiv);
-    return total;
-}
-
-/* Calcule la longeur physique totales des chaines */
-double longeurTotale(Chaines *C) {
-    double total = 0;
-    for(CellChaine *cell = C->chaines; cell; total += longueurTotale(cell), cell = cell->suiv);
     return total;
 }
 
