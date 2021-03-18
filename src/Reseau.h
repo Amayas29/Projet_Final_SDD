@@ -1,5 +1,6 @@
 #ifndef __RESEAU_H__
 #define __RESEAU_H__
+
 #include "Chaine.h"
 
 typedef struct noeud Noeud;
@@ -31,11 +32,16 @@ typedef struct {
     CellCommodite *commodites;      /* Liste des commodites a relier */
 } Reseau;
 
-Noeud* rechercheCreeNoeudListe(Reseau *R, double x, double y);
-Reseau* reconstitueReseauListe(Chaines *C);
+Noeud *rechercheCreeNoeudListe(Reseau *R, double x, double y);
+Reseau *reconstitueReseauListe(Chaines *C);
 void ecrireReseau(Reseau *R, FILE *file);
 int nbLiaisons(Reseau *R);
 int nbCommodites(Reseau *R);
-void afficheReseauSVG(Reseau *R, char* nomInstance);
-#endif
+void afficheReseauSVG(Reseau *R, char *nomInstance);
 
+void liberer_cell_noeuds(CellNoeud *cells, int rm);
+void liberer_noeud(Noeud *noeud);
+void liberer_commodite(CellCommodite *cmd);
+void liberer_reseau(Reseau *reseau);
+
+#endif
