@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "Chaine.h"
 #include "commun.h"
@@ -157,10 +158,7 @@ void ecrireChaines(Chaines *C, FILE *file) {
      /* On parcours les chaines */
     for(CellChaine *chaines = C->chaines;  chaines; chaines = chaines->suiv) {
 
-        nb_points = 0;
-        
-        /* On calucle le nombre de points */
-        for(CellPoint *points = chaines->points; points; points = points->suiv, nb_points++);
+        nb_points = comptePointsChaines(chaines);
 
         /* On ecrit le numero et le nombre de points de la chaine */
         fprintf(file, "%d %d ", chaines->numero, nb_points);
@@ -226,8 +224,49 @@ void afficheChainesSVG(Chaines *C, char* nomInstance) {
     SVGfinalize(&svg);
 }
 
-double longueurTotale(Chaines *C);
-int comptePointsTotal(Chaines *C);
+/* Calcule la distance entre deux points */
+static double distance_points(CellPoint *p1, CellPoint *p2) {
+    if (!p1 || !p2) return 0;
+    return sqrt(pow((p1->x - p2->x), 2) + pow((p1->y - p2->y), 2));
+}
+
+/* Calcule la longeur physique d'une chaine */
+double longueurChaine(CellChaine *C) {
+
+    CellPoint *pred = NULL;
+    double longeur = 0;
+
+    for(CellPoint *curr = C->points; curr; curr = curr->suiv) {
+        longeur += distance_points(pred, curr);
+        pred = curr;
+    }
+
+    return longeur;
+}
+
+/* Calcule le nombre de points d'une chaine */
+int comptePointsChaines(CellChaine *C) {
+    int nb_points = 0;
+        
+    /* On calucle le nombre de points */
+    for(CellPoint *points = C->points; points; points = points->suiv, nb_points++);
+
+    return nb_points;
+}
+
+/* Calcule le nombre totale de points de la structure des chaines */
+int comptePointsTotal(Chaines *C) {
+    int total = 0;
+    for(CellChaine *cell = C->chaines; cell; total += comptePointsChaines(cell), cell = cell->suiv);
+    return total;
+}
+
+/* Calcule la longeur physique totales des chaines */
+double longeurTotale(Chaines *C) {
+    double total = 0;
+    for(CellChaine *cell = C->chaines; cell; total += longueurTotale(cell), cell = cell->suiv);
+    return total;
+}
 
 /* On libere un point */
 void liberer_point(CellPoint *point) {
