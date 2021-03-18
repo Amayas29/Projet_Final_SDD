@@ -1,9 +1,7 @@
 #include <stdlib.h>
 #include "Chaine.h"
 
-
-int main(int argc, char const *argv[])
-{
+int main(int argc, char const *argv[]) {
     
     FILE *fichier = fopen("../resources/00014_burma.cha","r");
     Chaines *graphe = lectureChaines(fichier);
@@ -11,7 +9,6 @@ int main(int argc, char const *argv[])
     
     afficheChainesSVG(graphe,"graphe");
     liberer_structure(graphe);
-    
 
     return 0;
 }
