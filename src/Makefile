@@ -1,6 +1,7 @@
 CC = gcc
 FLAGS =  -Wall -g
-all : ChaineMain
+PROGS = ChaineMain
+all : $(PROGS)
 
 ChaineMain : ChaineMain.o Chaine.o SVGwriter.o
 	$(CC) $(FLAGS) -o $@ $^
@@ -15,4 +16,4 @@ SVGwriter.o : SVGwriter.c  SVGwriter.h
 	$(CC) $(FLAGS) -c $<
 
 clean:
-	rm -f *.o Chaine_main
+	rm -f *.o $(PROGS) *.html

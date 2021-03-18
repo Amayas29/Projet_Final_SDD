@@ -175,8 +175,7 @@ void ecrireChaines(Chaines *C, FILE *file) {
 
 /* Permet de construire un fichier svg représentant la structure de chaines */
 void afficheChainesSVG(Chaines *C, char* nomInstance) {
-    
-    int i;
+
     double maxx = 0, maxy = 0, minx = 1e6, miny = 1e6;
     double precx, precy;
     
