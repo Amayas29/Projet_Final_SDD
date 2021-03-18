@@ -3,6 +3,7 @@
 
 #include "Chaine.h"
 #include "commun.h"
+#include "SVGwriter.h"
 
 /* Permet de lire la structure de chaines à partir d'un fichier */
 Chaines* lectureChaines(FILE *file) {
@@ -153,13 +154,18 @@ void ecrireChaines(Chaines *C, FILE *file) {
     fprintf(file, "NbChain: %d\nGamma: %d\n", C->nbChaines, C->gamma);
 
     int nb_points;
+     /* On parcours les chaines */
     for(CellChaine *chaines = C->chaines;  chaines; chaines = chaines->suiv) {
 
         nb_points = 0;
+        
+        /* On calucle le nombre de points */
         for(CellPoint *points = chaines->points; points; points = points->suiv, nb_points++);
 
+        /* On ecrit le numero et le nombre de points de la chaine */
         fprintf(file, "%d %d ", chaines->numero, nb_points);
 
+        /* Pour chaque chaine on parcours sa liste de points et on les écrits */
         for(CellPoint *points = chaines->points; points; points = points->suiv)
             fprintf(file, "%.2f %.2f ", points->x, points->y);
 
@@ -167,15 +173,69 @@ void ecrireChaines(Chaines *C, FILE *file) {
     }
 }
 
-void afficheChainesSVG(Chaines *C, char* nomInstance);
+/* Permet de construire un fichier svg représentant la structure de chaines */
+void afficheChainesSVG(Chaines *C, char* nomInstance) {
+    
+    int i;
+    double maxx = 0, maxy = 0, minx = 1e6, miny = 1e6;
+    double precx, precy;
+    
+    CellChaine *ccour;
+    CellPoint *pcour;
+    SVGwriter svg;
+
+    ccour = C->chaines;
+    while (ccour != NULL) {
+
+        pcour = ccour->points;
+
+        while (pcour != NULL) {
+
+            if (maxx < pcour->x) maxx = pcour->x;
+            if (maxy < pcour->y) maxy = pcour->y;
+            if (minx > pcour->x) minx = pcour->x;
+            if (miny > pcour->y) miny = pcour->y;
+
+            pcour=pcour->suiv;
+        }
+
+        ccour=ccour->suiv;
+    }
+
+    SVGinit(&svg, nomInstance, 500, 500);
+
+    ccour = C->chaines;
+
+    while (ccour != NULL) {
+
+        pcour = ccour->points;
+        SVGlineRandColor(&svg);
+        SVGpoint(&svg, 500 * (pcour->x-minx) / (maxx-minx), 500 * (pcour->y-miny) / (maxy-miny)); 
+        precx = pcour->x;
+        precy = pcour->y;  
+        pcour = pcour->suiv;
+
+        while (pcour != NULL) {
+            SVGline(&svg, 500 * (precx-minx) / (maxx-minx), 500 * (precy-miny) / (maxy-miny), 500 * (pcour->x-minx) / (maxx-minx), 500 * (pcour->y-miny) / (maxy-miny));
+            SVGpoint(&svg, 500 * (pcour->x-minx) / (maxx-minx), 500 * (pcour->y-miny) / (maxy-miny));
+            precx = pcour->x;
+            precy = pcour->y;    
+            pcour = pcour->suiv;
+        }
+        ccour = ccour->suiv;
+    }
+    SVGfinalize(&svg);
+}
+
 double longueurTotale(Chaines *C);
 int comptePointsTotal(Chaines *C);
 
-
+/* On libere un point */
 void liberer_point(CellPoint *point) {
     free(point);
 }
 
+/* On libere une liste de points */
 void liberer_liste_points(CellPoint *liste) {
 
     CellPoint *curr = NULL;
@@ -186,6 +246,7 @@ void liberer_liste_points(CellPoint *liste) {
     }
 }
 
+/* On libere une chaine */
 void liberer_chaine(CellChaine *chaine) {
     if(!chaine)
         return;
@@ -194,6 +255,7 @@ void liberer_chaine(CellChaine *chaine) {
     free(chaine);
 }
 
+/* On libere la liste des chaines */
 void liberer_liste_chaines(CellChaine *liste) {
 
     CellChaine *curr = NULL;
@@ -204,6 +266,7 @@ void liberer_liste_chaines(CellChaine *liste) {
     }
 }
 
+/* On libere toute la structure */
 void liberer_structure(Chaines *graphe) {
 
     if(!graphe)

@@ -12,8 +12,6 @@
 #define Red "#FF0000"
 #define RoyalBlue "#486CE8"
 
-
-
 typedef struct SVGwriter_struct {
   
   char lineColor[10];  /* Default color value */
@@ -26,8 +24,6 @@ typedef struct SVGwriter_struct {
   char gencol[16];
 
 } SVGwriter;
-
-
   
 /* Initialise le struct SVGwriter passe en parametre
       nomfic: nom du fichier html \'a creer
