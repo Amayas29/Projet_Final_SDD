@@ -1,11 +1,11 @@
 CC = gcc
 FLAGS =  -Wall -g
-all : Chaine_main
+all : ChaineMain
 
-Chaine_main : Chaine_main.o Chaine.o SVGwriter.o
+ChaineMain : ChaineMain.o Chaine.o SVGwriter.o
 	$(CC) $(FLAGS) -o $@ $^
 
-Chaine_main.o : Chaine_main.c Chaine.h commun.h
+ChaineMain.o : ChaineMain.c Chaine.h commun.h
 	$(CC) $(FLAGS) -c $<
 
 Chaine.o : Chaine.c  SVGwriter.h Chaine.h commun.h 
