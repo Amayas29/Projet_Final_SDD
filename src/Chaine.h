@@ -1,36 +1,36 @@
 #ifndef __CHAINE_H__
-#define __CHAINE_H__	
+#define __CHAINE_H__
 
 #include <stdio.h>
 
 /* Liste chainee de points */
-typedef struct cellPoint{
-  double x,y;                   /* Coordonnees du point */
-  struct cellPoint *suiv;       /* Cellule suivante dans la liste */
+typedef struct cellPoint {
+    double x, y;            /* Coordonnees du point */
+    struct cellPoint *suiv; /* Cellule suivante dans la liste */
 } CellPoint;
 
 /* Celllule d une liste (chainee) de chaines */
-typedef struct cellChaine{
-  int numero;                   /* Numero de la chaine */
-  CellPoint *points;            /* Liste des points de la chaine */
-  struct cellChaine *suiv;      /* Cellule suivante dans la liste */
+typedef struct cellChaine {
+    int numero;              /* Numero de la chaine */
+    CellPoint *points;       /* Liste des points de la chaine */
+    struct cellChaine *suiv; /* Cellule suivante dans la liste */
 } CellChaine;
 
 /* L'ensemble des chaines */
 typedef struct {
-  int gamma;                    /* Nombre maximal de fibres par cable */
-  int nbChaines;                /* Nombre de chaines */
-  CellChaine *chaines;          /* La liste chainee des chaines */
+    int gamma;           /* Nombre maximal de fibres par cable */
+    int nbChaines;       /* Nombre de chaines */
+    CellChaine *chaines; /* La liste chainee des chaines */
 } Chaines;
 
-Chaines* lectureChaines(FILE *file);
-void ecrireChaines(Chaines *C, FILE *file);
-void afficheChainesSVG(Chaines *C, char* nomInstance);
-double longueurChaine(CellChaine *C);
-double longueurTotale(Chaines *C);
+Chaines *lecture_chaines(FILE *file);
+void ecrire_chaines(Chaines *C, FILE *file);
+void affiche_chaines_SVG(Chaines *C, char *nomInstance);
+double longueur_chaine(CellChaine *C);
+double longueur_totale(Chaines *C);
 
-int comptePointsChaines(CellChaine *C);
-int comptePointsTotal(Chaines *C);
+int compte_points_chaines(CellChaine *C);
+int compte_points_total(Chaines *C);
 
 void liberer_point(CellPoint *point);
 void liberer_liste_points(CellPoint *liste);
@@ -40,4 +40,4 @@ void liberer_liste_chaines(CellChaine *liste);
 
 void liberer_structure(Chaines *graphe);
 
-#endif	
+#endif

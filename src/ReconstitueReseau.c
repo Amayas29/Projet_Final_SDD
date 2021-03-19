@@ -6,12 +6,12 @@
 #include "commun.h"
 
 int main(int argc, char *argv[]) {
-    
-
     if (argc != 3) {
-        fprintf(stderr, "Usage: %s <filename>"\
-            " <number : Le choix de la structure> \n\t- 1 pour les listes \n\t"\
-            "- 2 pour la table de hachage \n\t- 3 pour les arbres\n", argv[0]);
+        fprintf(stderr,
+                "Usage: %s <filename>"
+                " <number : Le choix de la structure> \n\t- 1 pour les listes \n\t"
+                "- 2 pour la table de hachage \n\t- 3 pour les arbres\n",
+                argv[0]);
         return 1;
     }
 
@@ -32,39 +32,35 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    Chaines *chaines = lectureChaines(file);
-    if(!chaines) {
+    Chaines *chaines = lecture_chaines(file);
+    if (!chaines) {
         fclose(file);
         return 1;
     }
 
     if (number == 1) {
+        Reseau *reseau = reconstitue_reseau_liste(chaines);
 
-        Reseau *reseau = reconstitueReseauListe(chaines);
-
-        if(!reseau) {
+        if (!reseau) {
             liberer_structure(chaines);
             fclose(file);
             return 1;
         }
 
         FILE *f = fopen("Test.log", "w");
-        if(f) {
-            ecrireReseau(reseau, f);
+        if (f) {
+            ecrire_reseau(reseau, f);
             fclose(f);
         }
 
         liberer_reseau(reseau);
     }
 
-    if(number == 2) {
-
+    if (number == 2) {
     }
 
     if (number == 3) {
-
     }
-
 
     liberer_structure(chaines);
     fclose(file);
