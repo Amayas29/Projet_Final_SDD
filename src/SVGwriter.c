@@ -41,7 +41,7 @@ void SVGlineColor(SVGwriter *svg, char *col) {
     strcpy(svg->lineColor, col);
 }
 
-void SVGlineRandColor(SVGwriter *svg){
+void SVGlineRandColor(SVGwriter *svg) {
     int i;
     for (i = 1; i <= 6; i++) svg->lineColor[i] = svg->gencol[rand()%16];
 }

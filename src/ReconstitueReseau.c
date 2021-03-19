@@ -10,8 +10,8 @@ int main(int argc, char *argv[]) {
 
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <filename>"\
-            "<number : Le choix de la structure \n\t - 1 pour les listes \n\t"\
-            "- 2 pour la table de hachage \n\t - 3 pour les arbres\n>\n", argv[0]);
+            " <number : Le choix de la structure> \n\t- 1 pour les listes \n\t"\
+            "- 2 pour la table de hachage \n\t- 3 pour les arbres\n", argv[0]);
         return 1;
     }
 
@@ -48,6 +48,12 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
+        FILE *f = fopen("Test.log", "w");
+        if(f) {
+            ecrireReseau(reseau, f);
+            fclose(f);
+        }
+
         liberer_reseau(reseau);
     }
 
@@ -59,5 +65,8 @@ int main(int argc, char *argv[]) {
 
     }
 
+
+    liberer_structure(chaines);
+    fclose(file);
     return 0;
 }
