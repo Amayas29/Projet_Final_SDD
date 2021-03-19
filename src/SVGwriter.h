@@ -12,6 +12,8 @@
 #define Red "#FF0000"
 #define RoyalBlue "#486CE8"
 
+#include <stdio.h>
+
 typedef struct SVGwriter_struct {
     char line_color[10];  /* Default color value */
     char point_color[10]; /* Default color value */
