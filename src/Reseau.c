@@ -7,10 +7,9 @@
 #include "SVGwriter.h"
 #include "commun.h"
 
-
-Noeud *cree_noeud (int numero,double x,double y){
-    Noeud *nd = (Noeud *) maloc(sizeof(Noeud));
-    if(!nd){ 
+Noeud *cree_noeud(int numero, double x, double y) {
+    Noeud *nd = (Noeud *)maloc(sizeof(Noeud));
+    if (!nd) {
         print_probleme("Erreur d'allocation");
         return NULL;
     }
@@ -22,9 +21,9 @@ Noeud *cree_noeud (int numero,double x,double y){
     return nd;
 }
 
-CellNoeud *cree_cell_noeud (Noeud * noeud){
-    CellNoeud *cell = (CellNoeud *) malloc(sizeof(CellNoeud));
-    if(!cell){ 
+CellNoeud *cree_cell_noeud(Noeud *noeud) {
+    CellNoeud *cell = (CellNoeud *)malloc(sizeof(CellNoeud));
+    if (!cell) {
         print_probleme("Erreur d'allocation");
         return NULL;
     }
@@ -32,12 +31,11 @@ CellNoeud *cree_cell_noeud (Noeud * noeud){
     cell->nd = noeud;
     cell->suiv = NULL;
     return cell;
-
 }
 
-CellCommodite *cree_cell_commodite(Noeud *extr_A ,Noeud *extr_B ){
-    CellCommodite *comm = (CellCommodite *) malloc(sizeof(CellCommodite));
-    if(!comm){
+CellCommodite *cree_cell_commodite(Noeud *extr_A, Noeud *extr_B) {
+    CellCommodite *comm = (CellCommodite *)malloc(sizeof(CellCommodite));
+    if (!comm) {
         print_probleme("Erreur d'allocation");
         return NULL;
     }
@@ -48,8 +46,7 @@ CellCommodite *cree_cell_commodite(Noeud *extr_A ,Noeud *extr_B ){
     return comm;
 }
 
-Reseau *cree_reseau(int gamma){
-    
+Reseau *cree_reseau(int gamma) {
     Reseau *reseau = malloc(sizeof(Reseau));
 
     if (!reseau) {
@@ -62,7 +59,6 @@ Reseau *cree_reseau(int gamma){
     reseau->nb_noeuds = 0;
     reseau->noeuds = NULL;
     return reseau;
-
 }
 
 Noeud *recherche_cree_noeud_liste(Reseau *R, double x, double y) {
@@ -80,15 +76,14 @@ Noeud *recherche_cree_noeud_liste(Reseau *R, double x, double y) {
         pred = noeud;
     }
 
-    
-    Noeud *nd =  cree_noeud(++R->nb_noeuds, x,y);
-    if (!nd) 
+    Noeud *nd = cree_noeud(++R->nb_noeuds, x, y);
+    if (!nd)
         return NULL;
 
     CellNoeud *cell = cree_cell_noeud(nd);
-    if (!cell) 
+    if (!cell)
         return NULL;
-    
+
     if (!pred) {
         R->noeuds = cell;
         return nd;
@@ -105,9 +100,8 @@ Reseau *reconstitue_reseau_liste(Chaines *C) {
     }
 
     Reseau *reseau = cree_reseau(C->gamma);
-    if(!reseau)
+    if (!reseau)
         return NULL;
-
 
     for (CellChaine *chaine = C->chaines; chaine; chaine = chaine->suiv) {
         Noeud *first = NULL, *last = NULL;
@@ -137,16 +131,14 @@ Reseau *reconstitue_reseau_liste(Chaines *C) {
                     continue;
                 }
 
-            
-
                 CellNoeud *vn = cree_cell_noeud(last);
-                if(!vn) {
+                if (!vn) {
                     liberer_reseau(reseau);
                     return NULL;
                 }
 
                 CellNoeud *vl = cree_cell_noeud(noeud);
-                if(!vl) {
+                if (!vl) {
                     liberer_reseau(reseau);
                     free(vn);
                     return NULL;
@@ -163,7 +155,7 @@ Reseau *reconstitue_reseau_liste(Chaines *C) {
         }
 
         if (first) {
-            CellCommodite *cmd = cree_cell_commodite(first,last);
+            CellCommodite *cmd = cree_cell_commodite(first, last);
 
             if (!cmd) {
                 liberer_reseau(reseau);
@@ -335,4 +327,50 @@ void liberer_reseau(Reseau *reseau) {
     liberer_commodites(reseau->commodites);
     liberer_cell_noeuds(reseau->noeuds, 1);
     free(reseau);
+}
+
+Noeud *recherche_cree_noeud_hachage(Reseau *R, TableHachage *hash_table, double x, double y) {
+    if (!R || !hash_table || !hash_table->table) {
+        print_probleme("Erreur d'allocation");
+        return NULL;
+    }
+
+    int hash = hachage(key(x, y), hash_table->lenght);
+    CellNoeud *liste = hash_table->table[hash];
+
+    for (; liste && (liste->nd->x != x || liste->nd->y != y); liste = liste->suiv) continue;
+
+    if (liste)
+        return liste->nd;
+
+    Noeud *nd = malloc(sizeof(Noeud));
+    CellNoeud *noeud_r = malloc(sizeof(CellNoeud));
+    CellNoeud *noeud_h = malloc(sizeof(CellNoeud));
+
+    if (!nd || !noeud_r || !noeud_h) {
+        print_probleme("Erreur d'allocation");
+        free(nd);
+        free(noeud_h);
+        free(noeud_r);
+        return NULL;
+    }
+
+    nd->x = x;
+    nd->y = y;
+    nd->voisins = 0;
+    nd->num = ++R->nb_noeuds;
+
+    noeud_r->nd = nd;
+    noeud_h->nd = nd;
+
+    noeud_r->suiv = R->noeuds;
+    R->noeuds = noeud_r;
+
+    noeud_h->suiv = hash_table->table[hash];
+    hash_table->table[hash] = noeud_r;
+
+    return nd;
+}
+
+Reseau *reconstitue_reseau_hachage(Chaines *C, int lenght) {
 }
