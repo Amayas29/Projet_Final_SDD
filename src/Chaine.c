@@ -245,17 +245,14 @@ int compte_points_chaines(CellChaine *C) {
     int nb_points = 0;
 
     /* On calucle le nombre de points */
-    for (CellPoint *points = C->points; points; points = points->suiv, nb_points++)
-        ;
-
+    for (CellPoint *points = C->points; points; points = points->suiv, nb_points++) continue;
     return nb_points;
 }
 
 /* Calcule le nombre totale de points de la structure des chaines */
 int compte_points_total(Chaines *C) {
     int total = 0;
-    for (CellChaine *cell = C->chaines; cell; total += compte_points_chaines(cell), cell = cell->suiv)
-        ;
+    for (CellChaine *cell = C->chaines; cell; total += compte_points_chaines(cell), cell = cell->suiv) continue;
     return total;
 }
 
