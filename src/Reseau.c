@@ -336,7 +336,7 @@ void liberer_reseau(Reseau *reseau) {
 
 Noeud *recherche_cree_noeud_hachage(Reseau *R, TableHachage *hash_table, double x, double y) {
     if (!R || !hash_table || !hash_table->table) {
-        print_probleme("Erreur d'allocation");
+        print_probleme("Pointeur invalide");
         return NULL;
     }
 
@@ -377,4 +377,94 @@ Noeud *recherche_cree_noeud_hachage(Reseau *R, TableHachage *hash_table, double 
 }
 
 Reseau *reconstitue_reseau_hachage(Chaines *C, int lenght) {
+    if (!C) {
+        print_probleme("Pointeur invalide");
+        return NULL;
+    }
+
+    if (lenght <= 0) {
+        print_probleme("Taille invalide");
+        return NULL;
+    }
+
+    TableHachage *table_hachage = cree_table_hachage(lenght);
+    if (!table_hachage)
+        return NULL;
+
+    Reseau *reseau = cree_reseau(C->gamma);
+    if (!reseau) {
+        liberer_table_hachage(table_hachage);
+        return NULL;
+    }
+
+    for (CellChaine *chaine = C->chaines; chaine; chaine = chaine->suiv) {
+        Noeud *first = NULL, *last = NULL;
+
+        for (CellPoint *point = chaine->points; point; point = point->suiv) {
+            Noeud *noeud = recherche_cree_noeud_hachage(reseau, table_hachage, point->x, point->y);
+
+            if (!noeud) {
+                liberer_reseau(reseau);
+                liberer_table_hachage(table_hachage);
+                return NULL;
+            }
+
+            if (!first)
+                first = noeud;
+
+            if (last) {
+                int existe = 0;
+                for (CellNoeud *voisins = noeud->voisins; voisins; voisins = voisins->suiv) {
+                    if (voisins->nd->num == last->num) {
+                        existe = 1;
+                        break;
+                    }
+                }
+
+                if (existe) {
+                    last = noeud;
+                    continue;
+                }
+
+                CellNoeud *vn = cree_cell_noeud(last);
+                if (!vn) {
+                    liberer_reseau(reseau);
+                    liberer_table_hachage(table_hachage);
+                    return NULL;
+                }
+
+                CellNoeud *vl = cree_cell_noeud(noeud);
+                if (!vl) {
+                    liberer_reseau(reseau);
+                    liberer_table_hachage(table_hachage);
+                    free(vn);
+                    return NULL;
+                }
+
+                vn->suiv = noeud->voisins;
+                noeud->voisins = vn;
+
+                vl->suiv = last->voisins;
+                last->voisins = vl;
+            }
+
+            last = noeud;
+        }
+
+        if (first) {
+            CellCommodite *cmd = cree_cell_commodite(first, last);
+
+            if (!cmd) {
+                liberer_reseau(reseau);
+                liberer_table_hachage(table_hachage);
+                return NULL;
+            }
+
+            cmd->suiv = reseau->commodites;
+            reseau->commodites = cmd;
+        }
+    }
+
+    liberer_table_hachage(table_hachage);
+    return reseau;
 }
