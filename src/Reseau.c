@@ -77,12 +77,17 @@ Noeud *recherche_cree_noeud_liste(Reseau *R, double x, double y) {
     }
 
     Noeud *nd = cree_noeud(++R->nb_noeuds, x, y);
-    if (!nd)
+    if (!nd) {
+        R->nb_noeuds--;
         return NULL;
+    }
 
     CellNoeud *cell = cree_cell_noeud(nd);
-    if (!cell)
+    if (!cell) {
+        R->nb_noeuds--;
+        liberer_noeud(nd);
         return NULL;
+    }
 
     if (!pred) {
         R->noeuds = cell;
@@ -343,25 +348,23 @@ Noeud *recherche_cree_noeud_hachage(Reseau *R, TableHachage *hash_table, double 
     if (liste)
         return liste->nd;
 
-    Noeud *nd = malloc(sizeof(Noeud));
-    CellNoeud *noeud_r = malloc(sizeof(CellNoeud));
-    CellNoeud *noeud_h = malloc(sizeof(CellNoeud));
+    int nb = R->nb_noeuds + 1;
+    Noeud *nd = cree_noeud(nb, x, y);
+    if (!nd)
+        return NULL;
 
-    if (!nd || !noeud_r || !noeud_h) {
-        print_probleme("Erreur d'allocation");
-        free(nd);
-        free(noeud_h);
-        free(noeud_r);
+    CellNoeud *noeud_r = cree_cell_noeud(nd);
+    if (!noeud_r) {
+        liberer_noeud(nd);
         return NULL;
     }
 
-    nd->x = x;
-    nd->y = y;
-    nd->voisins = 0;
-    nd->num = ++R->nb_noeuds;
-
-    noeud_r->nd = nd;
-    noeud_h->nd = nd;
+    CellNoeud *noeud_h = cree_cell_noeud(nd);
+    if (!noeud_r) {
+        liberer_noeud(nd);
+        free(noeud_r);
+        return NULL;
+    }
 
     noeud_r->suiv = R->noeuds;
     R->noeuds = noeud_r;
@@ -369,6 +372,7 @@ Noeud *recherche_cree_noeud_hachage(Reseau *R, TableHachage *hash_table, double 
     noeud_h->suiv = hash_table->table[hash];
     hash_table->table[hash] = noeud_r;
 
+    R->nb_noeuds = nb;
     return nd;
 }
 
