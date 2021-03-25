@@ -7,6 +7,64 @@
 #include "SVGwriter.h"
 #include "commun.h"
 
+
+Noeud *cree_noeud (int numero,double x,double y){
+    Noeud *nd = (Noeud *) maloc(sizeof(Noeud));
+    if(!nd){ 
+        print_probleme("Erreur d'allocation");
+        return NULL;
+    }
+    nd->num = numero;
+    nd->voisins = NULL;
+    nd->x = x;
+    nd->y = y;
+
+    return nd;
+}
+
+CellNoeud *cree_cell_noeud (Noeud * noeud){
+    CellNoeud *cell = (CellNoeud *) malloc(sizeof(CellNoeud));
+    if(!cell){ 
+        print_probleme("Erreur d'allocation");
+        return NULL;
+    }
+
+    cell->nd = noeud;
+    cell->suiv = NULL;
+    return cell;
+
+}
+
+CellCommodite *cree_cell_commodite(Noeud *extr_A ,Noeud *extr_B ){
+    CellCommodite *comm = (CellCommodite *) malloc(sizeof(CellCommodite));
+    if(!comm){
+        print_probleme("Erreur d'allocation");
+        return NULL;
+    }
+    comm->extr_A = extr_A;
+    comm->extr_B = extr_B;
+    comm->suiv = NULL;
+
+    return comm;
+}
+
+Reseau *cree_reseau(int gamma){
+    
+    Reseau *reseau = malloc(sizeof(Reseau));
+
+    if (!reseau) {
+        print_probleme("Erreur d'allocation");
+        return NULL;
+    }
+
+    reseau->gamma = gamma;
+    reseau->commodites = NULL;
+    reseau->nb_noeuds = 0;
+    reseau->noeuds = NULL;
+    return reseau;
+
+}
+
 Noeud *recherche_cree_noeud_liste(Reseau *R, double x, double y) {
     if (!R) {
         print_probleme("Pointeur invalide");
@@ -22,27 +80,15 @@ Noeud *recherche_cree_noeud_liste(Reseau *R, double x, double y) {
         pred = noeud;
     }
 
-    CellNoeud *cell = malloc(sizeof(CellNoeud));
-    if (!cell) {
-        print_probleme("Erreur d'allocation");
+    
+    Noeud *nd =  cree_noeud(++R->nb_noeuds, x,y);
+    if (!nd) 
         return NULL;
-    }
 
-    Noeud *nd = malloc(sizeof(Noeud));
-
-    if (!nd) {
-        free(cell);
-        print_probleme("Erreur d'allocation");
+    CellNoeud *cell = cree_cell_noeud(nd);
+    if (!cell) 
         return NULL;
-    }
-
-    nd->num = ++R->nb_noeuds;
-    nd->voisins = NULL;
-    nd->x = x;
-    nd->y = y;
-    cell->nd = nd;
-    cell->suiv = NULL;
-
+    
     if (!pred) {
         R->noeuds = cell;
         return nd;
@@ -58,17 +104,10 @@ Reseau *reconstitue_reseau_liste(Chaines *C) {
         return NULL;
     }
 
-    Reseau *reseau = malloc(sizeof(Reseau));
-
-    if (!reseau) {
-        print_probleme("Erreur d'allocation");
+    Reseau *reseau = cree_reseau(C->gamma);
+    if(!reseau)
         return NULL;
-    }
 
-    reseau->gamma = C->gamma;
-    reseau->commodites = NULL;
-    reseau->nb_noeuds = 0;
-    reseau->noeuds = NULL;
 
     for (CellChaine *chaine = C->chaines; chaine; chaine = chaine->suiv) {
         Noeud *first = NULL, *last = NULL;
@@ -98,19 +137,20 @@ Reseau *reconstitue_reseau_liste(Chaines *C) {
                     continue;
                 }
 
-                CellNoeud *vn = malloc(sizeof(CellNoeud));
-                CellNoeud *vl = malloc(sizeof(CellNoeud));
+            
 
-                if (!vn || !vl) {
+                CellNoeud *vn = cree_cell_noeud(last);
+                if(!vn) {
                     liberer_reseau(reseau);
-                    print_probleme("Erreur d'allocation");
-                    free(vn);
-                    free(vl);
                     return NULL;
                 }
 
-                vn->nd = last;
-                vl->nd = noeud;
+                CellNoeud *vl = cree_cell_noeud(noeud);
+                if(!vl) {
+                    liberer_reseau(reseau);
+                    free(vn);
+                    return NULL;
+                }
 
                 vn->suiv = noeud->voisins;
                 noeud->voisins = vn;
@@ -123,15 +163,13 @@ Reseau *reconstitue_reseau_liste(Chaines *C) {
         }
 
         if (first) {
-            CellCommodite *cmd = malloc(sizeof(CellCommodite));
+            CellCommodite *cmd = cree_cell_commodite(first,last);
 
             if (!cmd) {
                 liberer_reseau(reseau);
                 return NULL;
             }
 
-            cmd->extr_A = first;
-            cmd->extr_B = last;
             cmd->suiv = reseau->commodites;
             reseau->commodites = cmd;
         }
