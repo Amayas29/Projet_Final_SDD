@@ -345,13 +345,10 @@ Noeud *recherche_cree_noeud_hachage(Reseau *R, TableHachage *hash_table, double 
 
     for (; liste && (liste->nd->x != x || liste->nd->y != y); liste = liste->suiv) continue;
 
-    if (liste)
-        return liste->nd;
+    if (liste) return liste->nd;
 
-    int nb = R->nb_noeuds + 1;
-    Noeud *nd = cree_noeud(nb, x, y);
-    if (!nd)
-        return NULL;
+    Noeud *nd = cree_noeud(R->nb_noeuds + 1, x, y);
+    if (!nd) return NULL;
 
     CellNoeud *noeud_r = cree_cell_noeud(nd);
     if (!noeud_r) {
@@ -372,7 +369,7 @@ Noeud *recherche_cree_noeud_hachage(Reseau *R, TableHachage *hash_table, double 
     noeud_h->suiv = hash_table->table[hash];
     hash_table->table[hash] = noeud_r;
 
-    R->nb_noeuds = nb;
+    R->nb_noeuds++;
     return nd;
 }
 
@@ -470,10 +467,136 @@ Reseau *reconstitue_reseau_hachage(Chaines *C, int lenght) {
 }
 
 Noeud *recherche_cree_noeud_arbre(Reseau *R, ArbreQuat *arbre, ArbreQuat *parent, double x, double y) {
-    if (!R) {
+    if (!R || !arbre || !parent) {
         print_probleme("Pointeur invalide");
         return NULL;
     }
+
+    Noeud *noeud = recherche_noeud_arbre(arbre, x, y);
+    if (noeud) return noeud;
+
+    noeud = cree_noeud(R->nb_noeuds + 1, x, y);
+    if (!noeud) return NULL;
+
+    inserer_noeud_arbre(noeud, &arbre, parent);
+
+    CellNoeud *noeud_r = cree_cell_noeud(noeud);
+    if (!noeud_r) {
+        liberer_noeud(noeud);
+        return NULL;
+    }
+
+    noeud_r->suiv = R->noeuds;
+    R->noeuds = noeud_r;
+
+    R->nb_noeuds++;
+    return noeud;
 }
 
-Reseau *reconstitue_reseau_arbre(Chaines *C);
+Reseau *reconstitue_reseau_arbre(Chaines *C) {
+    if (!C) {
+        print_probleme("Pointeur invalide");
+        return NULL;
+    }
+
+    int xmax, xmin, ymax, ymin;
+    chaine_coord_min_max(C, &xmin, &ymin, &xmax, &ymax);
+
+    int cote_x = xmax - xmin;
+    int cote_y = ymax - ymin;
+
+    ArbreQuat *arbre = creer_arbre_quat(cote_x / 2, cote_y / 2, cote_x, cote_y);
+    if (!arbre) return NULL;
+
+    Reseau *reseau = cree_reseau(C->gamma);
+    if (!reseau) {
+        liberer_arbre(arbre);
+        return NULL;
+    }
+
+    for (CellChaine *chaine = C->chaines; chaine; chaine = chaine->suiv) {
+        Noeud *first = NULL, *last = NULL;
+
+        for (CellPoint *point = chaine->points; point; point = point->suiv) {
+            ArbreQuat *sous_arbre = NULL;
+
+            if (arbre->xc > point->x) {
+                if (arbre->yc > point->y)
+                    sous_arbre = arbre->so;
+                else
+                    sous_arbre = arbre->no;
+
+            } else {
+                if (arbre->yc > point->y)
+                    sous_arbre = arbre->se;
+                else
+                    sous_arbre = arbre->ne;
+            }
+
+            Noeud *noeud = recherche_cree_noeud_arbre(reseau, sous_arbre, arbre, point->x, point->y);
+
+            if (!noeud) {
+                liberer_reseau(reseau);
+                liberer_arbre(arbre);
+                return NULL;
+            }
+
+            if (!first)
+                first = noeud;
+
+            if (last) {
+                int existe = 0;
+                for (CellNoeud *voisins = noeud->voisins; voisins; voisins = voisins->suiv) {
+                    if (voisins->nd->num == last->num) {
+                        existe = 1;
+                        break;
+                    }
+                }
+
+                if (existe) {
+                    last = noeud;
+                    continue;
+                }
+
+                CellNoeud *vn = cree_cell_noeud(last);
+                if (!vn) {
+                    liberer_reseau(reseau);
+                    liberer_arbre(arbre);
+                    return NULL;
+                }
+
+                CellNoeud *vl = cree_cell_noeud(noeud);
+                if (!vl) {
+                    liberer_reseau(reseau);
+                    liberer_arbre(arbre);
+                    free(vn);
+                    return NULL;
+                }
+
+                vn->suiv = noeud->voisins;
+                noeud->voisins = vn;
+
+                vl->suiv = last->voisins;
+                last->voisins = vl;
+            }
+
+            last = noeud;
+        }
+
+        if (first) {
+            CellCommodite *cmd = cree_cell_commodite(first, last);
+
+            if (!cmd) {
+                liberer_reseau(reseau);
+                liberer_arbre(arbre);
+                return NULL;
+            }
+
+            cmd->suiv = reseau->commodites;
+            reseau->commodites = cmd;
+        }
+    }
+
+    liberer_arbre(arbre);
+    return reseau;
+}

@@ -19,4 +19,6 @@ void chaine_coord_min_max(Chaines *C, double *xmin, double *ymin, double *xmax, 
 ArbreQuat *creer_arbre_quat(double xc, double yc, double cote_x, double cote_y);
 void inserer_noeud_arbre(Noeud *noeud, ArbreQuat **arbre, ArbreQuat *parent);
 
+void liberer_arbre(ArbreQuat *arbre);
+Noeud *recherche_noeud_arbre(ArbreQuat *arbre, double x, double y);
 #endif
