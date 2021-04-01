@@ -1,7 +1,7 @@
 #ifndef __HACHAGE_H__
 #define __HACHAGE_H__
 
-#include "Reseau.h"
+#include "Noeud.h"
 
 typedef struct table {
     CellNoeud **table;

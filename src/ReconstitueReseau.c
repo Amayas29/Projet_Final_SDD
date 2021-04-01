@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (number == 2) {
-        Reseau *reseau = reconstitue_reseau_hachage(chaines,1000);
+        Reseau *reseau = reconstitue_reseau_hachage(chaines, 1000);
 
         if (!reseau) {
             liberer_structure(chaines);
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (number == 3) {
-         Reseau *reseau = reconstitue_reseau_arbre(chaines);
+        Reseau *reseau = reconstitue_reseau_arbre(chaines);
 
         if (!reseau) {
             liberer_structure(chaines);

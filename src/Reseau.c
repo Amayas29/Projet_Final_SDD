@@ -7,45 +7,6 @@
 #include "SVGwriter.h"
 #include "commun.h"
 
-Noeud *cree_noeud(int numero, double x, double y) {
-    Noeud *nd = (Noeud *)maloc(sizeof(Noeud));
-    if (!nd) {
-        print_probleme("Erreur d'allocation");
-        return NULL;
-    }
-    nd->num = numero;
-    nd->voisins = NULL;
-    nd->x = x;
-    nd->y = y;
-
-    return nd;
-}
-
-CellNoeud *cree_cell_noeud(Noeud *noeud) {
-    CellNoeud *cell = (CellNoeud *)malloc(sizeof(CellNoeud));
-    if (!cell) {
-        print_probleme("Erreur d'allocation");
-        return NULL;
-    }
-
-    cell->nd = noeud;
-    cell->suiv = NULL;
-    return cell;
-}
-
-CellCommodite *cree_cell_commodite(Noeud *extr_A, Noeud *extr_B) {
-    CellCommodite *comm = (CellCommodite *)malloc(sizeof(CellCommodite));
-    if (!comm) {
-        print_probleme("Erreur d'allocation");
-        return NULL;
-    }
-    comm->extr_A = extr_A;
-    comm->extr_B = extr_B;
-    comm->suiv = NULL;
-
-    return comm;
-}
-
 Reseau *cree_reseau(int gamma) {
     Reseau *reseau = malloc(sizeof(Reseau));
 
@@ -297,35 +258,6 @@ void affiche_reseau_SVG(Reseau *R, char *nomInstance) {
     SVG_finalize(&svg);
 }
 
-void liberer_cell_noeuds(CellNoeud *cells, int rm) {
-    CellNoeud *tmp = NULL;
-
-    while (cells) {
-        if (rm)
-            liberer_noeud(cells->nd);
-
-        tmp = cells->suiv;
-        free(cells);
-        cells = tmp;
-    }
-}
-
-void liberer_noeud(Noeud *noeud) {
-    if (!noeud) return;
-
-    liberer_cell_noeuds(noeud->voisins, 0);
-    free(noeud);
-}
-
-void liberer_commodites(CellCommodite *commodites) {
-    CellCommodite *tmp = NULL;
-    while (commodites) {
-        tmp = commodites->suiv;
-        free(commodites);
-        commodites = tmp;
-    }
-}
-
 void liberer_reseau(Reseau *reseau) {
     if (!reseau) return;
 
@@ -367,7 +299,7 @@ Noeud *recherche_cree_noeud_hachage(Reseau *R, TableHachage *hash_table, double 
     R->noeuds = noeud_r;
 
     noeud_h->suiv = hash_table->table[hash];
-    hash_table->table[hash] = noeud_r;
+    hash_table->table[hash] = noeud_h;
 
     R->nb_noeuds++;
     return nd;
@@ -467,12 +399,12 @@ Reseau *reconstitue_reseau_hachage(Chaines *C, int lenght) {
 }
 
 Noeud *recherche_cree_noeud_arbre(Reseau *R, ArbreQuat *arbre, ArbreQuat *parent, double x, double y) {
-    if (!R || !arbre || !parent) {
+    if (!R || !parent) {
         print_probleme("Pointeur invalide");
         return NULL;
     }
 
-    Noeud *noeud = recherche_noeud_arbre(arbre, x, y);
+    Noeud *noeud = recherche_noeud_arbre(parent, x, y);
     if (noeud) return noeud;
 
     noeud = cree_noeud(R->nb_noeuds + 1, x, y);
@@ -499,7 +431,7 @@ Reseau *reconstitue_reseau_arbre(Chaines *C) {
         return NULL;
     }
 
-    int xmax, xmin, ymax, ymin;
+    double xmax, xmin, ymax, ymin;
     chaine_coord_min_max(C, &xmin, &ymin, &xmax, &ymax);
 
     int cote_x = xmax - xmin;

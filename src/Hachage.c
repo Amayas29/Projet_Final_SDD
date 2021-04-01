@@ -16,13 +16,13 @@ int hachage(int key, int lenght) {
 }
 
 TableHachage *cree_table_hachage(int taille) {
-    TableHachage *table = (TableHachage *) malloc(sizeof(TableHachage));
+    TableHachage *table = (TableHachage *)malloc(sizeof(TableHachage));
     if (!table) {
         print_probleme("Erreur d'allocation");
         return NULL;
     }
     table->lenght = taille;
-    table->table = (CellNoeud *) malloc(sizeof(CellNoeud) * taille);
+    table->table = (CellNoeud **)malloc(sizeof(CellNoeud *) * taille);
 
     if (!table->table) {
         free(table);
@@ -41,5 +41,6 @@ void liberer_table_hachage(TableHachage *table) {
     for (int i = 0; i < table->lenght; i++)
         liberer_cell_noeuds(table->table[i], 0);
 
+    free(table->table);
     free(table);
 }
