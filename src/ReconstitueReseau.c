@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
-        FILE *f = fopen("Test.log", "w");
+        FILE *f = fopen("Test.liste.log", "w");
         if (f) {
             ecrire_reseau(reseau, f);
             fclose(f);
@@ -57,9 +57,39 @@ int main(int argc, char *argv[]) {
     }
 
     if (number == 2) {
+        Reseau *reseau = reconstitue_reseau_hachage(chaines,1000);
+
+        if (!reseau) {
+            liberer_structure(chaines);
+            fclose(file);
+            return 1;
+        }
+
+        FILE *f = fopen("Test.hash.log", "w");
+        if (f) {
+            ecrire_reseau(reseau, f);
+            fclose(f);
+        }
+
+        liberer_reseau(reseau);
     }
 
     if (number == 3) {
+         Reseau *reseau = reconstitue_reseau_arbre(chaines);
+
+        if (!reseau) {
+            liberer_structure(chaines);
+            fclose(file);
+            return 1;
+        }
+
+        FILE *f = fopen("Test.arbre.log", "w");
+        if (f) {
+            ecrire_reseau(reseau, f);
+            fclose(f);
+        }
+
+        liberer_reseau(reseau);
     }
 
     liberer_structure(chaines);

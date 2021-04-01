@@ -3,7 +3,7 @@ FLAGS =  -Wall -g
 PROGS = ChaineMain ReconstitueReseau
 all : $(PROGS)
 
-ReconstitueReseau : ReconstitueReseau.o Reseau.o Chaine.o SVGwriter.o
+ReconstitueReseau : ReconstitueReseau.o Reseau.o Chaine.o SVGwriter.o ArbreQaut.o
 	$(CC) $(FLAGS) -o $@ $^ -lm
 
 ReconstitueReseau.o : ReconstitueReseau.c commun.h Reseau.h
@@ -22,6 +22,9 @@ SVGwriter.o : SVGwriter.c SVGwriter.h
 	$(CC) $(FLAGS) -c $<
 
 Reseau.o : Reseau.c Chaine.h commun.h Reseau.h
+	$(CC) $(FLAGS) -c $<
+
+ArbreQaut.o : ArbreQaut.c ArbreQaut.h commun.h Reseau.h chaine.h 
 	$(CC) $(FLAGS) -c $<
 
 clean:
