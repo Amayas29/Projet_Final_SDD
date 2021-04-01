@@ -15,4 +15,8 @@ typedef struct arbreQuat {
     struct arbreQuat *ne; /* Sous-arbre nord-est, pour x >= xc et y >= yc */
 } ArbreQuat;
 
+void chaine_coord_min_max(Chaines *C, double *xmin, double *ymin, double *xmax, double *ymax);
+ArbreQuat *creer_arbre_quat(double xc, double yc, double cote_x, double cote_y);
+void inserer_noeud_arbre(Noeud *noeud, ArbreQuat **arbre, ArbreQuat *parent);
+
 #endif

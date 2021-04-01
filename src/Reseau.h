@@ -1,6 +1,7 @@
 #ifndef __RESEAU_H__
 #define __RESEAU_H__
 
+#include "ArbreQuat.h"
 #include "Chaine.h"
 #include "Hachage.h"
 
@@ -47,5 +48,7 @@ void liberer_reseau(Reseau *reseau);
 
 Noeud *recherche_cree_noeud_hachage(Reseau *R, TableHachage *table, double x, double y);
 Reseau *reconstitue_reseau_hachage(Chaines *C, int lenght);
+
+Noeud *recherche_cree_noeud_arbre(Reseau *R, ArbreQuat *arbre, ArbreQuat *parent, double x, double y);
 
 #endif

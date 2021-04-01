@@ -468,3 +468,10 @@ Reseau *reconstitue_reseau_hachage(Chaines *C, int lenght) {
     liberer_table_hachage(table_hachage);
     return reseau;
 }
+
+Noeud *recherche_cree_noeud_arbre(Reseau *R, ArbreQuat *arbre, ArbreQuat *parent, double x, double y) {
+    if (!R) {
+        print_probleme("Pointeur invalide");
+        return NULL;
+    }
+}
