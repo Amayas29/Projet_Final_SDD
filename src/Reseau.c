@@ -475,3 +475,5 @@ Noeud *recherche_cree_noeud_arbre(Reseau *R, ArbreQuat *arbre, ArbreQuat *parent
         return NULL;
     }
 }
+
+Reseau *reconstitue_reseau_arbre(Chaines *C);

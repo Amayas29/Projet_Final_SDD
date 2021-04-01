@@ -50,5 +50,6 @@ Noeud *recherche_cree_noeud_hachage(Reseau *R, TableHachage *table, double x, do
 Reseau *reconstitue_reseau_hachage(Chaines *C, int lenght);
 
 Noeud *recherche_cree_noeud_arbre(Reseau *R, ArbreQuat *arbre, ArbreQuat *parent, double x, double y);
+Reseau *reconstitue_reseau_arbre(Chaines *C);
 
 #endif
