@@ -1,5 +1,6 @@
 #include "ArbreQuat.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -66,38 +67,71 @@ void inserer_noeud_arbre(Noeud *noeud, ArbreQuat **arbre, ArbreQuat *parent) {
     }
 
     if (!*arbre) {
-        *arbre = creer_arbre_quat(parent->xc, parent->yc, parent->cote_x / 2, parent->cote_y / 2);
-        if (!arbre) return;
-
-        (*arbre)->noeud = noeud;
         if (parent->xc > noeud->x) {
             if (parent->yc > noeud->y) {
-                parent->so = *arbre;
-                (*arbre)->xc -= (*arbre)->cote_x / 2;
-                (*arbre)->yc -= (*arbre)->cote_y / 2;
+                if (!parent->so) {
+                    *arbre = creer_arbre_quat(noeud->x, noeud->y, parent->cote_x / 2, parent->cote_y / 2);
+                    if (!arbre) return;
+                    (*arbre)->noeud = noeud;
+                    parent->so = *arbre;
+                    return;
+                }
+                return inserer_noeud_arbre(noeud, &parent->so, parent);
+            }
+            if (!parent->no) {
+                *arbre = creer_arbre_quat(noeud->x, noeud->y, parent->cote_x / 2, parent->cote_y / 2);
+                if (!arbre) return;
+                (*arbre)->noeud = noeud;
+                parent->no = *arbre;
                 return;
             }
-            parent->no = *arbre;
-            (*arbre)->xc -= (*arbre)->cote_x / 2;
-            (*arbre)->yc += (*arbre)->cote_y / 2;
-            return;
+            return inserer_noeud_arbre(noeud, &parent->no, parent);
         }
 
         if (parent->yc > noeud->y) {
-            parent->se = *arbre;
-            (*arbre)->xc += (*arbre)->cote_x / 2;
-            (*arbre)->yc -= (*arbre)->cote_y / 2;
+            if (!parent->se) {
+                *arbre = creer_arbre_quat(noeud->x, noeud->y, parent->cote_x / 2, parent->cote_y / 2);
+                if (!arbre) return;
+                (*arbre)->noeud = noeud;
+                parent->se = *arbre;
+                return;
+            }
+            return inserer_noeud_arbre(noeud, &parent->se, parent);
+        }
+        if (!parent->ne) {
+            *arbre = creer_arbre_quat(noeud->x, noeud->y, parent->cote_x / 2, parent->cote_y / 2);
+            if (!arbre) return;
+            (*arbre)->noeud = noeud;
+            parent->ne = *arbre;
             return;
         }
-        parent->ne = *arbre;
-        (*arbre)->xc += (*arbre)->cote_x / 2;
-        (*arbre)->yc += (*arbre)->cote_y / 2;
-        return;
+        return inserer_noeud_arbre(noeud, &parent->ne, parent);
     }
 
     if ((*arbre)->noeud) {
         Noeud *tmp = (*arbre)->noeud;
         (*arbre)->noeud = NULL;
+
+        if (parent->xc > (*arbre)->xc) {
+            if (parent->yc > (*arbre)->yc) {
+                (*arbre)->xc = parent->xc - (*arbre)->cote_x / 2;
+                (*arbre)->yc = parent->yc - (*arbre)->cote_y / 2;
+            }
+
+            else {
+                (*arbre)->xc = parent->xc - (*arbre)->cote_x / 2;
+                (*arbre)->yc = parent->yc + (*arbre)->cote_y / 2;
+            }
+
+        } else {
+            if (parent->yc > (*arbre)->yc) {
+                (*arbre)->xc = parent->xc + (*arbre)->cote_x / 2;
+                (*arbre)->yc = parent->yc - (*arbre)->cote_y / 2;
+            } else {
+                (*arbre)->xc = parent->xc + (*arbre)->cote_x / 2;
+                (*arbre)->yc = parent->yc + (*arbre)->cote_y / 2;
+            }
+        }
 
         ArbreQuat *arbre_tmp = NULL;
         inserer_noeud_arbre(tmp, &arbre_tmp, *arbre);
@@ -141,6 +175,7 @@ Noeud *recherche_noeud_arbre(ArbreQuat *arbre, double x, double y) {
     if (arbre->noeud) {
         if (arbre->noeud->x == x && arbre->noeud->y == y)
             return arbre->noeud;
+
         return NULL;
     }
 

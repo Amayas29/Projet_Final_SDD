@@ -404,7 +404,7 @@ Noeud *recherche_cree_noeud_arbre(Reseau *R, ArbreQuat *arbre, ArbreQuat *parent
         return NULL;
     }
 
-    Noeud *noeud = recherche_noeud_arbre(parent, x, y);
+    Noeud *noeud = recherche_noeud_arbre(arbre, x, y);
     if (noeud) return noeud;
 
     noeud = cree_noeud(R->nb_noeuds + 1, x, y);
@@ -434,8 +434,8 @@ Reseau *reconstitue_reseau_arbre(Chaines *C) {
     double xmax, xmin, ymax, ymin;
     chaine_coord_min_max(C, &xmin, &ymin, &xmax, &ymax);
 
-    int cote_x = xmax - xmin;
-    int cote_y = ymax - ymin;
+    int cote_x = xmax;
+    int cote_y = ymax;
 
     ArbreQuat *arbre = creer_arbre_quat(cote_x / 2, cote_y / 2, cote_x, cote_y);
     if (!arbre) return NULL;
