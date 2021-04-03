@@ -67,45 +67,28 @@ void inserer_noeud_arbre(Noeud *noeud, ArbreQuat **arbre, ArbreQuat *parent) {
     }
 
     if (!*arbre) {
+        ArbreQuat **sous_fils = NULL;
         if (parent->xc > noeud->x) {
-            if (parent->yc > noeud->y) {
-                if (!parent->so) {
-                    *arbre = creer_arbre_quat(noeud->x, noeud->y, parent->cote_x / 2, parent->cote_y / 2);
-                    if (!arbre) return;
-                    (*arbre)->noeud = noeud;
-                    parent->so = *arbre;
-                    return;
-                }
-                return inserer_noeud_arbre(noeud, &parent->so, parent);
-            }
-            if (!parent->no) {
-                *arbre = creer_arbre_quat(noeud->x, noeud->y, parent->cote_x / 2, parent->cote_y / 2);
-                if (!arbre) return;
-                (*arbre)->noeud = noeud;
-                parent->no = *arbre;
-                return;
-            }
-            return inserer_noeud_arbre(noeud, &parent->no, parent);
+            if (parent->yc > noeud->y)
+                sous_fils = &parent->so;
+            else
+                sous_fils = &parent->no;
+        } else {
+            if (parent->yc > noeud->y)
+                sous_fils = &parent->se;
+            else
+                sous_fils = &parent->ne;
         }
 
-        if (parent->yc > noeud->y) {
-            if (!parent->se) {
-                *arbre = creer_arbre_quat(noeud->x, noeud->y, parent->cote_x / 2, parent->cote_y / 2);
-                if (!arbre) return;
-                (*arbre)->noeud = noeud;
-                parent->se = *arbre;
-                return;
-            }
-            return inserer_noeud_arbre(noeud, &parent->se, parent);
-        }
-        if (!parent->ne) {
+        if (!*sous_fils) {
             *arbre = creer_arbre_quat(noeud->x, noeud->y, parent->cote_x / 2, parent->cote_y / 2);
             if (!arbre) return;
             (*arbre)->noeud = noeud;
-            parent->ne = *arbre;
+            *sous_fils = *arbre;
             return;
         }
-        return inserer_noeud_arbre(noeud, &parent->ne, parent);
+
+        return inserer_noeud_arbre(noeud, sous_fils, parent);
     }
 
     if ((*arbre)->noeud) {
