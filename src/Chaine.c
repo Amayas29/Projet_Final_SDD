@@ -129,7 +129,7 @@ Chaines *lecture_chaines(FILE *file) {
         nb++;
     }
 
-    graphe->nbChaines = nb;
+    graphe->nb_chaines = nb;
     return graphe;
 }
 
@@ -146,7 +146,7 @@ void ecrire_chaines(Chaines *C, FILE *file) {
         return;
     }
 
-    fprintf(file, "NbChain: %d\nGamma: %d\n", C->nbChaines, C->gamma);
+    fprintf(file, "NbChain: %d\nGamma: %d\n", C->nb_chaines, C->gamma);
 
     int nb_points;
     /* On parcours les chaines */
@@ -165,7 +165,7 @@ void ecrire_chaines(Chaines *C, FILE *file) {
 }
 
 /* Permet de construire un fichier svg représentant la structure de chaines */
-void affiche_chaines_SVG(Chaines *C, char *nomInstance) {
+void affiche_chaines_SVG(Chaines *C, char *nom_instance) {
     double maxx = 0, maxy = 0, minx = 1e6, miny = 1e6;
     double precx, precy;
 
@@ -189,7 +189,7 @@ void affiche_chaines_SVG(Chaines *C, char *nomInstance) {
         ccour = ccour->suiv;
     }
 
-    SVG_init(&svg, nomInstance, 500, 500);
+    SVG_init(&svg, nom_instance, 500, 500);
 
     ccour = C->chaines;
 
@@ -297,4 +297,48 @@ void liberer_structure(Chaines *graphe) {
 
     liberer_liste_chaines(graphe->chaines);
     free(graphe);
+}
+
+Chaines *generation_aleatoire(int nb_chaines, int nb_points_chaines, int xmax, int ymax) {
+    Chaines *chaines = malloc(sizeof(Chaines));
+    if (!chaines) {
+        print_probleme("Probleme d'allocation");
+        return NULL;
+    }
+
+    chaines->gamma = 0;
+    chaines->nb_chaines = nb_chaines;
+    chaines->chaines = NULL;
+
+    for (int i = 0; i < nb_points_chaines; i++) {
+        CellChaine *chaine_i = malloc(sizeof(CellChaine));
+
+        if (!chaine_i) {
+            liberer_structure(chaines);
+            return NULL;
+        }
+
+        chaine_i->numero = i;
+        chaine_i->points = NULL;
+
+        chaine_i->suiv = chaines->chaines;
+        chaines->chaines = chaine_i;
+
+        for (int j = 0; j < nb_points_chaines; j++) {
+            CellPoint *point_ij = malloc(sizeof(CellPoint));
+
+            if (!point_ij) {
+                liberer_structure(chaines);
+                return NULL;
+            }
+
+            point_ij->suiv = chaine_i->points;
+            chaine_i->points = point_ij;
+
+            point_ij->x = rand() % (xmax + 1);
+            point_ij->y = rand() % (ymax + 1);
+        }
+    }
+
+    return chaines;
 }

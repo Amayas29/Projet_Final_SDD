@@ -20,7 +20,7 @@ Reseau *reconstitue_reseau_liste(Chaines *C);
 void ecrire_reseau(Reseau *R, FILE *file);
 int nb_liaisons(Reseau *R);
 int nb_commodites(Reseau *R);
-void affiche_reseau_SVG(Reseau *R, char *nomInstance);
+void affiche_reseau_SVG(Reseau *R, char *nom_instance);
 
 Reseau *cree_reseau(int gamma);
 void liberer_reseau(Reseau *reseau);
