@@ -67,28 +67,26 @@ void inserer_noeud_arbre(Noeud *noeud, ArbreQuat **arbre, ArbreQuat *parent) {
     }
 
     if (!*arbre) {
-        ArbreQuat **sous_fils = NULL;
-        if (parent->xc > noeud->x) {
-            if (parent->yc > noeud->y)
-                sous_fils = &parent->so;
-            else
-                sous_fils = &parent->no;
-        } else {
-            if (parent->yc > noeud->y)
-                sous_fils = &parent->se;
-            else
-                sous_fils = &parent->ne;
-        }
+        *arbre = creer_arbre_quat(noeud->x, noeud->y, parent->cote_x / 2, parent->cote_y / 2);
+        if (!arbre) return;
+        (*arbre)->noeud = noeud;
 
-        if (!*sous_fils) {
-            *arbre = creer_arbre_quat(noeud->x, noeud->y, parent->cote_x / 2, parent->cote_y / 2);
-            if (!arbre) return;
-            (*arbre)->noeud = noeud;
-            *sous_fils = *arbre;
+        if (parent->xc > noeud->x) {
+            if (parent->yc > noeud->y) {
+                parent->so = *arbre;
+                return;
+            }
+            parent->no = *arbre;
             return;
         }
 
-        return inserer_noeud_arbre(noeud, sous_fils, parent);
+        if (parent->yc > noeud->y) {
+            parent->se = *arbre;
+            return;
+        }
+
+        parent->ne = *arbre;
+        return;
     }
 
     if ((*arbre)->noeud) {
@@ -116,12 +114,35 @@ void inserer_noeud_arbre(Noeud *noeud, ArbreQuat **arbre, ArbreQuat *parent) {
             }
         }
 
-        ArbreQuat *arbre_tmp = NULL;
-        inserer_noeud_arbre(tmp, &arbre_tmp, *arbre);
+        ArbreQuat **sous_fils_tmp = NULL;
+        if (parent->xc > tmp->x) {
+            if (parent->yc > tmp->y)
+                sous_fils_tmp = &parent->so;
+            else
+                sous_fils_tmp = &parent->no;
+        } else {
+            if (parent->yc > tmp->y)
+                sous_fils_tmp = &parent->se;
+            else
+                sous_fils_tmp = &parent->ne;
+        }
 
-        ArbreQuat *arbre_noeud = NULL;
-        inserer_noeud_arbre(noeud, &arbre_noeud, *arbre);
+        inserer_noeud_arbre(tmp, sous_fils_tmp, *arbre);
 
+        ArbreQuat **sous_fils_noeud = NULL;
+        if (parent->xc > noeud->x) {
+            if (parent->yc > noeud->y)
+                sous_fils_noeud = &parent->so;
+            else
+                sous_fils_noeud = &parent->no;
+        } else {
+            if (parent->yc > noeud->y)
+                sous_fils_noeud = &parent->se;
+            else
+                sous_fils_noeud = &parent->ne;
+        }
+
+        inserer_noeud_arbre(noeud, sous_fils_noeud, *arbre);
         return;
     }
 
