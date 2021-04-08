@@ -1,12 +1,14 @@
 CC = gcc
 FLAGS =  -Wall -g
-PROGS = ChaineMain ReconstitueReseau
+PROGS = ChaineMain ReconstitueReseau Main
 all : $(PROGS)
 
 ReconstitueReseau : ReconstitueReseau.o Noeud.o Reseau.o Hachage.o Chaine.o SVGwriter.o ArbreQuat.o
 	$(CC) $(FLAGS) -o $@ $^ -lm
 
-ReconstitueReseau.o : ReconstitueReseau.c commun.h Reseau.h Noeud.h
+Main : main.o Noeud.o Reseau.o Hachage.o Chaine.o SVGwriter.o ArbreQuat.o
+	$(CC) $(FLAGS) -o $@ $^ -lm
+ReconstitueReseau.o : ReconstitueReseau.c *.h
 	$(CC) $(FLAGS) -c $<
 
 ChaineMain : Chaine.o ChaineMain.o SVGwriter.o
@@ -33,5 +35,7 @@ Noeud.o : Noeud.c Noeud.h commun.h
 Hachage.o : Hachage.c Hachage.h Noeud.h commun.h
 	$(CC) $(FLAGS) -c $<
 
+main.o: main.c *.h
+	$(CC) $(FLAGS) -c $<
 clean:
-	rm -f *.o $(PROGS) *.html *.log
+	rm -f *.o $(PROGS) *.html *.log *.compare.txt
