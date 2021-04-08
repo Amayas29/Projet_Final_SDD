@@ -37,5 +37,9 @@ Hachage.o : Hachage.c Hachage.h Noeud.h commun.h
 
 main.o: main.c *.h
 	$(CC) $(FLAGS) -c $<
+
+plot_comparaison: 
+	gnuplot -p < commande_plot_comparaison.txt
+
 clean:
-	rm -f *.o $(PROGS) *.html *.log *.compare.txt
+	rm -f *.o $(PROGS) *.html *.log *.compare.txt *.ps

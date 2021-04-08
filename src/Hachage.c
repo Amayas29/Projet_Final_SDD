@@ -29,6 +29,7 @@ TableHachage *cree_table_hachage(int taille) {
         print_probleme("Erreur d'allocation");
         return NULL;
     }
+    
     for (int i = 0; i < taille; i++)
         table->table[i] = NULL;
 

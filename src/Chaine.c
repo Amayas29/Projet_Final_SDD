@@ -18,8 +18,9 @@ Chaines *lecture_chaines(FILE *file) {
     char buffer[BUFSIZ];
     int nb_chaine, gamma;
 
-    /* On reccupére le nombre de chaines et le gamma avec véerificatiob de leur existence */
+    /* On reccupére le nombre de chaines et le gamma avec vérification de leur existence */
     if (!(fgets(buffer, BUFSIZ, file) && sscanf(buffer, "NbChain: %d", &nb_chaine) == 1 && fgets(buffer, BUFSIZ, file) && sscanf(buffer, "Gamma: %d", &gamma) == 1)) {
+        printf("%d %d\n", nb_chaine, gamma);
         print_probleme("Erreur de lecture : Mauvais format du fichier");
         return NULL;
     }
