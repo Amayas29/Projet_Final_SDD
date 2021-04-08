@@ -223,7 +223,7 @@ int nb_commodites(Reseau *R) {
     return number;
 }
 
-void affiche_reseau_SVG(Reseau *R, char *nomInstance) {
+void affiche_reseau_SVG(Reseau *R, char *nom_instance) {
     CellNoeud *courN, *courv;
     SVGwriter svg;
     double maxx = 0, maxy = 0, minx = 1e6, miny = 1e6;
@@ -237,7 +237,7 @@ void affiche_reseau_SVG(Reseau *R, char *nomInstance) {
         courN = courN->suiv;
     }
 
-    SVG_init(&svg, nomInstance, 500, 500);
+    SVG_init(&svg, nom_instance, 500, 500);
 
     courN = R->noeuds;
 
