@@ -24,17 +24,20 @@ Chaines *lecture_chaines(FILE *file) {
         print_probleme("Erreur de lecture : Mauvais format du fichier");
         return NULL;
     }
-
+    /* Allouer un graphe */
     Chaines *graphe = malloc(sizeof(Chaines));
-
+    
+    /* Tester si l'allocation s'est bien passé */
     if (!graphe) {
         print_probleme("Erreur d'allocation");
         return NULL;
     }
 
+    /* On initialise les attributs du graphe */
     graphe->gamma = gamma;
     graphe->chaines = NULL;
 
+    /* On cree des variables pour stocker a chaque fois le nombre de points et le numero lu appartir du fichier  */
     int numero_chaine, nb_points, j;
     double x, y;
 
@@ -67,17 +70,18 @@ Chaines *lecture_chaines(FILE *file) {
                 }
                 continue;
             }
-
+            /* Sauter les espace a chaque fois */
             while (buffer[i] && buffer[i] == ' ') i++;
 
             /* On réccupere la valeur X du point */
             char X[BUFSIZ];
             j = 0;
+            /* Si on trouve un espace donc on a recuperer le X, on arrete*/
             while (buffer[i] && buffer[i] != ' ')
                 X[j++] = buffer[i++];
-
+            /* Si on a lu aucun caractere donc on arrete la boucle (si X n'existe pas Y non plus et il ne y a plus de chaine) */
             if (j == 0) break;
-
+    
             X[j] = '\0';
 
             /* On ignore les espaces entre les points (SI une suite d'espace est introduite dans le fichier) */
@@ -86,9 +90,11 @@ Chaines *lecture_chaines(FILE *file) {
             /* On réccupere la valeur Y du point */
             char Y[BUFSIZ];
             j = 0;
+            /* Si on trouve un espace donc on a recuperer le Y on s'arrete */
             while (buffer[i] && buffer[i] != ' ')
                 Y[j++] = buffer[i++];
 
+            /* Si on a rien parcouru donc le Y n'existe pas on continue dans la boucle */ 
             if (j == 0) break;
             Y[j] = '\0';
 
@@ -224,7 +230,7 @@ static double distance_points(CellPoint *p1, CellPoint *p2) {
 double longueur_chaine(CellChaine *C) {
     CellPoint *pred = NULL;
     double longeur = 0;
-
+    // On parcours tout les points d'une chaine  et on somme les distance entre les point
     for (CellPoint *curr = C->points; curr; curr = curr->suiv) {
         longeur += distance_points(pred, curr);
         pred = curr;
@@ -236,6 +242,7 @@ double longueur_chaine(CellChaine *C) {
 /* Calcule la longeur physique totales des chaines */
 double longueur_totale(Chaines *C) {
     double total = 0;
+    // On parcours toutes les chaines et on somme leurs longeur
     for (CellChaine *cell = C->chaines; cell; total += longueur_chaine(cell), cell = cell->suiv)
         ;
     return total;
@@ -253,6 +260,7 @@ int compte_points_chaines(CellChaine *C) {
 /* Calcule le nombre totale de points de la structure des chaines */
 int compte_points_total(Chaines *C) {
     int total = 0;
+    // On somme le nombre de points cahque chaine pour avoir le nombre de du graphe
     for (CellChaine *cell = C->chaines; cell; total += compte_points_chaines(cell), cell = cell->suiv) continue;
     return total;
 }
@@ -265,6 +273,7 @@ void liberer_point(CellPoint *point) {
 /* On libere une liste de points */
 void liberer_liste_points(CellPoint *liste) {
     CellPoint *curr = NULL;
+    // on libere tout les points de la liste en gardant le suivant a chaque fois
     while (liste) {
         curr = liste->suiv;
         liberer_point(liste);
@@ -276,7 +285,7 @@ void liberer_liste_points(CellPoint *liste) {
 void liberer_chaine(CellChaine *chaine) {
     if (!chaine)
         return;
-
+    // liberer le point de la chaine et ensuite liberer la chaine
     liberer_liste_points(chaine->points);
     free(chaine);
 }
@@ -284,6 +293,7 @@ void liberer_chaine(CellChaine *chaine) {
 /* On libere la liste des chaines */
 void liberer_liste_chaines(CellChaine *liste) {
     CellChaine *curr = NULL;
+    // On parcoure tout les chaine et en libere la chaine courante en gardant la suivante
     while (liste) {
         curr = liste->suiv;
         liberer_chaine(liste);
@@ -295,51 +305,63 @@ void liberer_liste_chaines(CellChaine *liste) {
 void liberer_structure(Chaines *graphe) {
     if (!graphe)
         return;
-
+    // On libere tout les chaines ensuite on libere le graphe
     liberer_liste_chaines(graphe->chaines);
     free(graphe);
 }
 
 Chaines *generation_aleatoire(int nb_chaines, int nb_points_chaines, int xmax, int ymax) {
+    // On alloue la memoire pour le graphe
     Chaines *chaines = malloc(sizeof(Chaines));
+    // On teste si l'allocation c'est bien passer 
     if (!chaines) {
         print_probleme("Probleme d'allocation");
         return NULL;
     }
 
+    // On initialise les attributs du graphe
     chaines->gamma = 0;
     chaines->nb_chaines = nb_chaines;
     chaines->chaines = NULL;
 
+    // On boucle sur une chaine 
     for (int i = 0; i < nb_points_chaines; i++) {
+        // On cree a chaque fois une liste de chaines
         CellChaine *chaine_i = malloc(sizeof(CellChaine));
 
+        // On teste si l'allocation s'est bien passé
         if (!chaine_i) {
+            // Sinon on libere toutes les chaines deja cree
             liberer_structure(chaines);
             return NULL;
         }
-
+        // On inisialise les attributs d'une chaine
+        // Le numero est l'iteration de la boucle les points a null pour l'instant
         chaine_i->numero = i;
         chaine_i->points = NULL;
 
+        // On insert la chaine au debut de liste des chaines
         chaine_i->suiv = chaines->chaines;
         chaines->chaines = chaine_i;
 
+        // On boucle sur le nombre de points donne en parametre pour cree des points dans les coordonnes sont aleatiores 
         for (int j = 0; j < nb_points_chaines; j++) {
+            // On cree un point 
             CellPoint *point_ij = malloc(sizeof(CellPoint));
-
+            // Si l'allocation s'est mal passé on libere toute ce qui etait allouer et on returne null
             if (!point_ij) {
                 liberer_structure(chaines);
                 return NULL;
             }
-
+            // On insert le point en tete de liste des points de la chaine courante (cree juste avant)
             point_ij->suiv = chaine_i->points;
             chaine_i->points = point_ij;
 
+            // Inserer une valeur aleatoire pour le x et le y du point
             point_ij->x = rand() % (xmax + 1);
             point_ij->y = rand() % (ymax + 1);
         }
     }
-
+    // On retourne la liste de Chaines
     return chaines;
 }
