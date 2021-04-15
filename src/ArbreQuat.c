@@ -6,13 +6,14 @@
 
 #include "commun.h"
 
-// Permet de rechercher le minimum et le maximum des x et des y 
+// Permet de rechercher le minimum et le maximum des x et des y
 void chaine_coord_min_max(Chaines *C, double *xmin, double *ymin, double *xmax, double *ymax) {
     // Teste si la memoire est bien allouer avant l'appel a la fonction
     if (!C || !xmin || !ymin || !xmax || !ymax) {
         print_probleme("Pointeur invalide");
         return;
     }
+
     // Boolean pour savoir si on est dans a premiere iteration (la ou on initialise les variable minimums et maximums)
     int init = 1;
 
@@ -29,6 +30,7 @@ void chaine_coord_min_max(Chaines *C, double *xmin, double *ymin, double *xmax, 
                 init = 0;
                 continue;
             }
+
             /*
             * On teste a chaque fois si les coordonnes du point courrant sont superieur au maximum ou inferieur au minimum 
             * (recherche du minimum et du maximum)
@@ -52,6 +54,7 @@ void chaine_coord_min_max(Chaines *C, double *xmin, double *ymin, double *xmax, 
 ArbreQuat *creer_arbre_quat(double xc, double yc, double cote_x, double cote_y) {
     // allocation de l'arbre
     ArbreQuat *arbre = (ArbreQuat *)malloc(sizeof(ArbreQuat));
+
     // Teste d'allocation
     if (!arbre) {
         print_probleme("Erreur d'allocation");
@@ -74,22 +77,24 @@ ArbreQuat *creer_arbre_quat(double xc, double yc, double cote_x, double cote_y) 
 
 // Permet d'inserer un noeud dans un arbre selon les contraintes donnees
 void inserer_noeud_arbre(Noeud *noeud, ArbreQuat **arbre, ArbreQuat *parent) {
-    // Teste si la memoire est bien allouer avant l'appel a la fonction 
+    // Teste si la memoire est bien allouer avant l'appel a la fonction
     if (!noeud && !parent) {
         print_probleme("Pointeur invalide");
         return;
     }
+
     // Si l'arbre n'est pas allouer (donc il n'existe pas)
     if (!*arbre) {
         // On cree l'arbre
         *arbre = creer_arbre_quat(noeud->x, noeud->y, parent->cote_x / 2, parent->cote_y / 2);
+
         // On teste si il est bien créé
         if (!arbre) return;
 
         // Mettre le noeud dans l'arbre
         (*arbre)->noeud = noeud;
 
-        // Chercher la bonne position ou il faut mettre l'arbre dans son pere 
+        // Chercher la bonne position ou il faut mettre l'arbre dans son pere
         if (parent->xc > noeud->x) {
             if (parent->yc > noeud->y) {
                 parent->so = *arbre;
@@ -135,7 +140,7 @@ void inserer_noeud_arbre(Noeud *noeud, ArbreQuat **arbre, ArbreQuat *parent) {
             }
         }
 
-        // Ajouter le noeud garder 
+        // Ajouter le noeud garder
         /* 
         * Pour ca on doit d'abord chercher le bon emplacement du noeud avant l'insertion  
         * on teste selon ses coordonnes pour trouver son emplacement dans l'arbre
@@ -155,8 +160,7 @@ void inserer_noeud_arbre(Noeud *noeud, ArbreQuat **arbre, ArbreQuat *parent) {
         // inserer le noeud a son emplacement `sous_fils_tmp`
         inserer_noeud_arbre(tmp, sous_fils_tmp, *arbre);
 
-
-        // Ajouter le noeud donne en parametre de la fonction 
+        // Ajouter le noeud donne en parametre de la fonction
         /* 
         * Pour ca on doit d'abord chercher le bon emplacement du noeud avant l'insertion  
         * on teste selon ses coordonnes pour trouver son emplacement dans l'arbre
@@ -200,7 +204,7 @@ void inserer_noeud_arbre(Noeud *noeud, ArbreQuat **arbre, ArbreQuat *parent) {
 void liberer_arbre(ArbreQuat *arbre) {
     if (!arbre)
         return;
-    // liberer les 4 fils de l'arbre 
+    // liberer les 4 fils de l'arbre
     liberer_arbre(arbre->no);
     liberer_arbre(arbre->so);
     liberer_arbre(arbre->ne);
@@ -227,7 +231,7 @@ Noeud *recherche_noeud_arbre(ArbreQuat *arbre, double x, double y) {
 
         return NULL;
     }
-    // On continue de decendre dans la branche ou se trouve le noeud (en fonction de ses coordonnes) 
+    // On continue de decendre dans la branche ou se trouve le noeud (en fonction de ses coordonnes)
     if (arbre->xc > x) {
         if (arbre->yc > y)
             return recherche_noeud_arbre(arbre->so, x, y);
