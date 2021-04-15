@@ -10,7 +10,7 @@ typedef struct table {
 
 double key(double x, double y);
 
-int hachage(int key, int lenght);
+int hachage(double key, int lenght);
 
 void liberer_table_hachage(TableHachage *table);
 TableHachage *cree_table_hachage(int taille);

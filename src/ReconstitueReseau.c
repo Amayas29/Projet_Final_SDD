@@ -57,7 +57,15 @@ int main(int argc, char *argv[]) {
     }
 
     if (number == 2) {
-        Reseau *reseau = reconstitue_reseau_hachage(chaines, 1000);
+        TableHachage *table = cree_table_hachage(5000);
+        if (!table) {
+            liberer_structure(chaines);
+            fclose(file);
+            return 1;
+        }
+
+        Reseau *reseau = reconstitue_reseau_hachage(chaines, table);
+        liberer_table_hachage(table);
 
         if (!reseau) {
             liberer_structure(chaines);
@@ -75,7 +83,25 @@ int main(int argc, char *argv[]) {
     }
 
     if (number == 3) {
-        Reseau *reseau = reconstitue_reseau_arbre(chaines);
+        double xmax, xmin, ymax, ymin;
+        int cote_x, cote_y;
+
+        chaine_coord_min_max(chaines, &xmin, &ymin, &xmax, &ymax);
+
+        cote_x = xmax - xmin;
+        cote_y = ymax - ymin;
+
+        ArbreQuat *arbre = creer_arbre_quat((xmax + xmin) / 2, (ymax + ymin) / 2, cote_x, cote_y);
+
+        if (!arbre) {
+            liberer_structure(chaines);
+            fclose(file);
+            return 1;
+        }
+
+        Reseau *reseau = reconstitue_reseau_arbre(chaines, arbre);
+
+        liberer_arbre(arbre);
 
         if (!reseau) {
             liberer_structure(chaines);

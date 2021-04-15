@@ -26,9 +26,9 @@ Reseau *cree_reseau(int gamma);
 void liberer_reseau(Reseau *reseau);
 
 Noeud *recherche_cree_noeud_hachage(Reseau *R, TableHachage *table, double x, double y);
-Reseau *reconstitue_reseau_hachage(Chaines *C, int lenght);
+Reseau *reconstitue_reseau_hachage(Chaines *C, TableHachage *table_hachage);
 
 Noeud *recherche_cree_noeud_arbre(Reseau *R, ArbreQuat *arbre, ArbreQuat *parent, double x, double y);
-Reseau *reconstitue_reseau_arbre(Chaines *C);
+Reseau *reconstitue_reseau_arbre(Chaines *C, ArbreQuat *arbre);
 
 #endif

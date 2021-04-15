@@ -168,6 +168,7 @@ Noeud *recherche_cree_noeud_liste(Reseau *R, double x, double y) {
     }
 
     Noeud *nd = cree_noeud(++R->nb_noeuds, x, y);
+
     if (!nd) {
         R->nb_noeuds--;
         return NULL;
@@ -273,13 +274,12 @@ Noeud *recherche_cree_noeud_hachage(Reseau *R, TableHachage *hash_table, double 
     }
 
     int hash = hachage(key(x, y), hash_table->lenght);
-    CellNoeud *liste = hash_table->table[hash];
 
-    for (; liste && (liste->nd->x != x || liste->nd->y != y); liste = liste->suiv) continue;
-
-    if (liste) return liste->nd;
+    for (CellNoeud *liste = hash_table->table[hash]; liste; liste = liste->suiv)
+        if (liste->nd->x == x && liste->nd->y == y) return liste->nd;
 
     Noeud *nd = cree_noeud(R->nb_noeuds + 1, x, y);
+
     if (!nd) return NULL;
 
     CellNoeud *noeud_r = cree_cell_noeud(nd);
@@ -305,26 +305,14 @@ Noeud *recherche_cree_noeud_hachage(Reseau *R, TableHachage *hash_table, double 
     return nd;
 }
 
-Reseau *reconstitue_reseau_hachage(Chaines *C, int lenght) {
-    if (!C) {
+Reseau *reconstitue_reseau_hachage(Chaines *C, TableHachage *table_hachage) {
+    if (!C || !table_hachage) {
         print_probleme("Pointeur invalide");
         return NULL;
     }
 
-    if (lenght <= 0) {
-        print_probleme("Taille invalide");
-        return NULL;
-    }
-
-    TableHachage *table_hachage = cree_table_hachage(lenght);
-    if (!table_hachage)
-        return NULL;
-
     Reseau *reseau = cree_reseau(C->gamma);
-    if (!reseau) {
-        liberer_table_hachage(table_hachage);
-        return NULL;
-    }
+    if (!reseau) return NULL;
 
     for (CellChaine *chaine = C->chaines; chaine; chaine = chaine->suiv) {
         Noeud *first = NULL, *last = NULL;
@@ -334,7 +322,6 @@ Reseau *reconstitue_reseau_hachage(Chaines *C, int lenght) {
 
             if (!noeud) {
                 liberer_reseau(reseau);
-                liberer_table_hachage(table_hachage);
                 return NULL;
             }
 
@@ -358,14 +345,12 @@ Reseau *reconstitue_reseau_hachage(Chaines *C, int lenght) {
                 CellNoeud *vn = cree_cell_noeud(last);
                 if (!vn) {
                     liberer_reseau(reseau);
-                    liberer_table_hachage(table_hachage);
                     return NULL;
                 }
 
                 CellNoeud *vl = cree_cell_noeud(noeud);
                 if (!vl) {
                     liberer_reseau(reseau);
-                    liberer_table_hachage(table_hachage);
                     free(vn);
                     return NULL;
                 }
@@ -385,7 +370,6 @@ Reseau *reconstitue_reseau_hachage(Chaines *C, int lenght) {
 
             if (!cmd) {
                 liberer_reseau(reseau);
-                liberer_table_hachage(table_hachage);
                 return NULL;
             }
 
@@ -394,7 +378,6 @@ Reseau *reconstitue_reseau_hachage(Chaines *C, int lenght) {
         }
     }
 
-    liberer_table_hachage(table_hachage);
     return reseau;
 }
 
@@ -425,26 +408,14 @@ Noeud *recherche_cree_noeud_arbre(Reseau *R, ArbreQuat *arbre, ArbreQuat *parent
     return noeud;
 }
 
-Reseau *reconstitue_reseau_arbre(Chaines *C) {
-    if (!C) {
+Reseau *reconstitue_reseau_arbre(Chaines *C, ArbreQuat *arbre) {
+    if (!C || !arbre) {
         print_probleme("Pointeur invalide");
         return NULL;
     }
 
-    double xmax, xmin, ymax, ymin;
-    chaine_coord_min_max(C, &xmin, &ymin, &xmax, &ymax);
-
-    int cote_x = xmax;
-    int cote_y = ymax;
-
-    ArbreQuat *arbre = creer_arbre_quat(cote_x / 2, cote_y / 2, cote_x, cote_y);
-    if (!arbre) return NULL;
-
     Reseau *reseau = cree_reseau(C->gamma);
-    if (!reseau) {
-        liberer_arbre(arbre);
-        return NULL;
-    }
+    if (!reseau) return NULL;
 
     for (CellChaine *chaine = C->chaines; chaine; chaine = chaine->suiv) {
         Noeud *first = NULL, *last = NULL;
@@ -469,7 +440,6 @@ Reseau *reconstitue_reseau_arbre(Chaines *C) {
 
             if (!noeud) {
                 liberer_reseau(reseau);
-                liberer_arbre(arbre);
                 return NULL;
             }
 
@@ -493,14 +463,12 @@ Reseau *reconstitue_reseau_arbre(Chaines *C) {
                 CellNoeud *vn = cree_cell_noeud(last);
                 if (!vn) {
                     liberer_reseau(reseau);
-                    liberer_arbre(arbre);
                     return NULL;
                 }
 
                 CellNoeud *vl = cree_cell_noeud(noeud);
                 if (!vl) {
                     liberer_reseau(reseau);
-                    liberer_arbre(arbre);
                     free(vn);
                     return NULL;
                 }
@@ -520,7 +488,6 @@ Reseau *reconstitue_reseau_arbre(Chaines *C) {
 
             if (!cmd) {
                 liberer_reseau(reseau);
-                liberer_arbre(arbre);
                 return NULL;
             }
 
@@ -529,6 +496,5 @@ Reseau *reconstitue_reseau_arbre(Chaines *C) {
         }
     }
 
-    liberer_arbre(arbre);
     return reseau;
 }

@@ -10,9 +10,12 @@ double key(double x, double y) {
     return y + (x + y) * (x + y + 1) / 2;
 }
 
-int hachage(int key, int lenght) {
+int hachage(double key, int lenght) {
     float a = (sqrt(5) - 1) / 2.0;
-    return ((int)(lenght * (key * a - (int)(key * a))));
+    double kA = key * a;
+    long kA_int = (long)kA;
+
+    return (int)(lenght * (kA - kA_int));
 }
 
 TableHachage *cree_table_hachage(int taille) {
@@ -29,7 +32,7 @@ TableHachage *cree_table_hachage(int taille) {
         print_probleme("Erreur d'allocation");
         return NULL;
     }
-    
+
     for (int i = 0; i < taille; i++)
         table->table[i] = NULL;
 
