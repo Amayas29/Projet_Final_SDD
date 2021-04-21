@@ -35,5 +35,10 @@ typedef struct {
 } Graphe;
 
 Graphe *creer_graphe(Reseau *reseau);
-
+Sommet *cree_sommet(int num,int x,int y);
+Arete *cree_arete(int u,int v);
+Cellule_arete *cree_cellule_arete(Arete* arete);
+void liberer_graphe(Graphe *graphe);
+void liberer_sommet(Sommet *sommet);
+void liberer_arete(Cellule_arete *arete);
 #endif
