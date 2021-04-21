@@ -344,6 +344,7 @@ Chaines *generation_aleatoire(int nb_chaines, int nb_points_chaines, int xmax, i
 
         // On teste si l'allocation s'est bien passé
         if (!chaine_i) {
+            print_probleme("Erreur d'allocation");
             // Sinon on libere toutes les chaines deja cree
             liberer_structure(chaines);
             return NULL;
@@ -365,6 +366,7 @@ Chaines *generation_aleatoire(int nb_chaines, int nb_points_chaines, int xmax, i
 
             // Si l'allocation s'est mal passé on libere toute ce qui etait allouer et on returne null
             if (!point_ij) {
+                print_probleme("Erreur d'allocation");
                 liberer_structure(chaines);
                 return NULL;
             }
