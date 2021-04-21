@@ -1,6 +1,6 @@
 CC = gcc
 FLAGS =  -Wall -g
-PROGS = ChaineMain ReconstitueReseau Main Main_alea
+PROGS = ChaineMain ReconstitueReseau Main Main_alea test_graphe
 
 all : $(PROGS)
 
@@ -18,6 +18,10 @@ ReconstitueReseau.o : ReconstitueReseau.c *.h
 
 ChaineMain : Chaine.o ChaineMain.o SVGwriter.o
 	$(CC) $(FLAGS) -o $@ $^ -lm
+
+test_graphe : Struct_File.o Graphe.o test_graphe.o Noeud.o Reseau.o Hachage.o Chaine.o SVGwriter.o ArbreQuat.o
+	$(CC) $(FLAGS) -o $@ $^ -lm
+
 
 ChaineMain.o : ChaineMain.c Chaine.h commun.h
 	$(CC) $(FLAGS) -c $<
@@ -46,10 +50,18 @@ main.o: main.c *.h
 main_alea.o: main_alea.c *.h
 	$(CC) $(FLAGS) -c $<
 
+Graphe.o : Graphe.c *.h
+	$(CC) $(FLAGS) -c $<
+
+Struct_File.o : Struct_File.c Struct_File.h
+	$(CC) $(FLAGS) -c $<
+
+test_graphe.o : test_graphe.c *.h
+	$(CC) $(FLAGS) -c $<
+
 plot_comparaison: 
 	gnuplot -p < ../comparaison_files/commande_plot_comparaison_liste.txt
 	gnuplot -p < ../comparaison_files/commande_plot_comparaison_hash_arbre.txt
-
 
 plot_comparaison_alea:
 	gnuplot -p < ../comparaison_files/commande_plot_comparaison_alea_hash_arbre.txt

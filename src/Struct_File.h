@@ -12,6 +12,8 @@ typedef struct {
     Cellule_file *dernier; /* pointeur sur le dernier element de la liste */
 } S_file;
 
+S_file *cree_file();
+
 /* Initialisation d une file */
 void init_file(S_file *f);
 
@@ -24,5 +26,7 @@ void enfile(S_file *f, int donnee);
 /* Supprime le premier element de la file et retourne sa valeur */
 /* PREREQUIS: la file ne doit pas etre vide */
 int defile(S_file *f);
+
+void liberer_file(S_file *f);
 
 #endif

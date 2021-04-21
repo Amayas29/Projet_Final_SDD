@@ -1,5 +1,6 @@
 #include "Graphe.h"
 
+#include "Struct_File.h"
 #include "commun.h"
 
 Graphe *creer_graphe(Reseau *reseau) {
@@ -53,13 +54,15 @@ Graphe *creer_graphe(Reseau *reseau) {
         for (CellNoeud *voisin = noeud->nd->voisins; voisin; voisin = voisin->suiv) {
             Arete *arete = NULL;
             Sommet *v = graphe->T_som[voisin->nd->num - 1];
+
             if (v) {
-                for (Cellule_arete *cellule = v->L_voisin; cellule; cellule->suiv) {
+                for (Cellule_arete *cellule = v->L_voisin; cellule; cellule = cellule->suiv) {
                     if (cellule->a->u == noeud->nd->num - 1 || cellule->a->v == noeud->nd->num - 1) {
                         arete = cellule->a;
                         break;
                     }
                 }
+
             } else
                 arete = cree_arete(noeud->nd->num - 1, voisin->nd->num - 1);
 
@@ -78,16 +81,154 @@ Graphe *creer_graphe(Reseau *reseau) {
             }
 
             cell->suiv = graphe->T_som[noeud->nd->num - 1]->L_voisin;
-            graphe->T_som[noeud->nd->num - 1]->L_voisin = cell->suiv;
+            graphe->T_som[noeud->nd->num - 1]->L_voisin = cell;
         }
     }
 
     return graphe;
 }
 
+int t(Graphe *graphe, int u, int v) {
+    u--;
+    v--;
+
+    if (!graphe) {
+        print_probleme("Pointeur invalide");
+        return -1;
+    }
+
+    if (u < 0 || u >= graphe->nb_som || v < 0 || v >= graphe->nb_som) {
+        print_probleme("Sommet invalide");
+        return -1;
+    }
+
+    int *visit = (int *)malloc(sizeof(int) * graphe->nb_som);
+    if (!visit) {
+        print_probleme("Erreur d'allocation");
+        return -1;
+    }
+
+    int *pred = (int *)malloc(sizeof(int) * graphe->nb_som);
+    if (!pred) {
+        print_probleme("Erreur d'allocation");
+        free(visit);
+        return -1;
+    }
+
+    for (int i = 0; i < graphe->nb_som; i++) {
+        visit[i] = 0;
+        pred[i] = -1;
+    }
+
+    visit[u] = 1;
+    S_file *file = cree_file();
+
+    if (!file) {
+        print_probleme("Erreur de creation");
+        free(visit);
+        free(pred);
+        return -1;
+    }
+
+    enfile(file, u);
+
+    while (!est_file_vide(file)) {
+        int curr = defile(file);
+
+        for (Cellule_arete *voisins = graphe->T_som[curr]->L_voisin; voisins; voisins = voisins->suiv) {
+            int pos = voisins->a->u == curr ? voisins->a->v : voisins->a->u;
+
+            if (visit[pos] == 0) {
+                visit[pos] = 1;
+                enfile(file, pos);
+                pred[pos] = curr;
+            }
+        }
+    }
+
+    int i = v;
+
+    while (pred[i] != -1) {
+        printf("%d <-- ", i+1);
+        i = pred[i];
+    }
+
+    printf("%d\n", u+1);
+
+    free(visit);
+    free(pred);
+    liberer_file(file);
+    return 0;
+}
+
+int plus_petit_nb_aretes(Graphe *graphe, int u, int v) {
+    u--;
+    v--;
+
+    if (!graphe) {
+        print_probleme("Pointeur invalide");
+        return -1;
+    }
+
+    if (u < 0 || u >= graphe->nb_som || v < 0 || v >= graphe->nb_som) {
+        print_probleme("Sommet invalide");
+        return -1;
+    }
+
+    int *visit = (int *)malloc(sizeof(int) * graphe->nb_som);
+    if (!visit) {
+        print_probleme("Erreur d'allocation");
+        return -1;
+    }
+
+    int *D = (int *)malloc(sizeof(int) * graphe->nb_som);
+    if (!D) {
+        print_probleme("Erreur d'allocation");
+        free(visit);
+        return -1;
+    }
+
+    for (int i = 0; i < graphe->nb_som; i++)
+        visit[i] = 0;
+
+    visit[u] = 1;
+    D[u] = 0;
+
+    S_file *file = cree_file();
+
+    if (!file) {
+        print_probleme("Erreur de creation");
+        free(visit);
+        free(D);
+        return -1;
+    }
+
+    enfile(file, u);
+
+    while (!est_file_vide(file)) {
+        int curr = defile(file);
+
+        for (Cellule_arete *voisins = graphe->T_som[curr]->L_voisin; voisins; voisins = voisins->suiv) {
+            int pos = voisins->a->u == curr ? voisins->a->v : voisins->a->u;
+
+            if (visit[pos] == 0) {
+                visit[pos] = 1;
+                enfile(file, pos);
+                D[pos] = D[curr] + 1;
+            }
+        }
+    }
+
+    int result = D[v];
+    free(visit);
+    free(D);
+    liberer_file(file);
+    return result;
+}
+
 Sommet *cree_sommet(int num, int x, int y) {
     Sommet *new = (Sommet *)malloc(sizeof(Sommet));
-    if (new) {
+    if (!new) {
         print_probleme("Erreur d'allocation");
         return NULL;
     }

@@ -3,6 +3,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "commun.h"
+
+S_file *cree_file() {
+    S_file *file = malloc(sizeof(S_file));
+    if (!file) {
+        print_probleme("Erreur d'allocation");
+        return NULL;
+    }
+
+    init_file(file);
+    return file;
+}
+
 void init_file(S_file *f) {
     f->tete = NULL;
     f->dernier = NULL;
@@ -31,4 +44,11 @@ int defile(S_file *f) {
     f->tete = f->tete->suiv;
     free(temp);
     return v;
+}
+
+void liberer_file(S_file *f) {
+    if (!f) return;
+
+    while (!(est_file_vide(f))) defile(f);
+    free(f);
 }
