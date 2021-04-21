@@ -8,6 +8,10 @@ ReconstitueReseau : ReconstitueReseau.o Noeud.o Reseau.o Hachage.o Chaine.o SVGw
 
 Main : main.o Noeud.o Reseau.o Hachage.o Chaine.o SVGwriter.o ArbreQuat.o
 	$(CC) $(FLAGS) -o $@ $^ -lm
+
+Main_alea : main_alea.o Noeud.o Reseau.o Hachage.o Chaine.o SVGwriter.o ArbreQuat.o
+	$(CC) $(FLAGS) -o $@ $^ -lm
+
 ReconstitueReseau.o : ReconstitueReseau.c *.h
 	$(CC) $(FLAGS) -c $<
 
@@ -35,7 +39,11 @@ Noeud.o : Noeud.c Noeud.h commun.h
 Hachage.o : Hachage.c Hachage.h Noeud.h commun.h
 	$(CC) $(FLAGS) -c $<
 
+
 main.o: main.c *.h
+	$(CC) $(FLAGS) -c $<
+
+main_alea.o: main_alea.c *.h
 	$(CC) $(FLAGS) -c $<
 
 plot_comparaison: 
