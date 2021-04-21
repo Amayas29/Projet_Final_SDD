@@ -4,51 +4,53 @@
 #include "commun.h"
 
 int main(int argc, char **argv) {
+    // On test les arguments
     if (argc != 2) {
         fprintf(stderr,
                 "Usage: %s <filename>\n", argv[0]);
         return 1;
     }
 
+    // On supprime le nom du fichier main depuis les arguments
     argc--;
     argv++;
 
-    FILE *file_reseau = fopen(argv[0], "r");
+    // On ouvre le fichier des chaines
+    FILE *file_chaines = fopen(argv[0], "r");
 
-    if (!file_reseau) {
+    if (!file_chaines) {
         print_probleme("Erreur d'ouverture du fichier");
         return 1;
     }
 
-    Chaines *chaines = lecture_chaines(file_reseau);
+    // On lit les chaines depuis le fichier
+    Chaines *chaines = lecture_chaines(file_chaines);
+
+    fclose(file_chaines);
+
     if (!chaines) {
         print_probleme("Erreur de création");
-        fclose(file_reseau);
         return 1;
     }
-    fclose(file_reseau);
 
+    // On reconstruit le reseau
     Reseau *reseau = reconstitue_reseau_liste(chaines);
+
+    // Si on a eu une erreur de reconstitution
     if (!reseau) {
         liberer_structure(chaines);
         return 1;
     }
 
-    Graphe *graphe = creer_graphe(reseau);
-
-    if (!graphe) {
-        print_probleme("Erreur de création");
-        liberer_structure(chaines);
-        liberer_reseau(reseau);
-        return 1;
-    }
-
+    // On reorganise le reseau et on affiche le resultat
     int res = reorganise_reseau(reseau);
-    printf("%d \n", res);
+    if (res == 1)
+        printf("Le reseau est reorganisé\n");
+    else
+        printf("Le reseau n'est pas reorganisé\n");
 
     liberer_structure(chaines);
     liberer_reseau(reseau);
-    liberer_graphe(graphe);
 
     return 0;
 }
