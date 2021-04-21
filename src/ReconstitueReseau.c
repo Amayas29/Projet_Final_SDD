@@ -34,6 +34,7 @@ int main(int argc, char *argv[]) {
 
     Chaines *chaines = lecture_chaines(file);
     if (!chaines) {
+        print_probleme("Erreur de création");
         fclose(file);
         return 1;
     }
@@ -42,6 +43,7 @@ int main(int argc, char *argv[]) {
         Reseau *reseau = reconstitue_reseau_liste(chaines);
 
         if (!reseau) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file);
             return 1;
@@ -59,6 +61,7 @@ int main(int argc, char *argv[]) {
     if (number == 2) {
         TableHachage *table = cree_table_hachage(5000);
         if (!table) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file);
             return 1;
@@ -68,6 +71,7 @@ int main(int argc, char *argv[]) {
         liberer_table_hachage(table);
 
         if (!reseau) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file);
             return 1;
@@ -94,6 +98,7 @@ int main(int argc, char *argv[]) {
         ArbreQuat *arbre = creer_arbre_quat((xmax + xmin) / 2, (ymax + ymin) / 2, cote_x, cote_y);
 
         if (!arbre) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file);
             return 1;
@@ -104,6 +109,7 @@ int main(int argc, char *argv[]) {
         liberer_arbre(arbre);
 
         if (!reseau) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file);
             return 1;

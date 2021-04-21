@@ -170,12 +170,14 @@ Noeud *recherche_cree_noeud_liste(Reseau *R, double x, double y) {
     Noeud *nd = cree_noeud(++R->nb_noeuds, x, y);
 
     if (!nd) {
+        print_probleme("Erreur de création");
         R->nb_noeuds--;
         return NULL;
     }
 
     CellNoeud *cell = cree_cell_noeud(nd);
     if (!cell) {
+        print_probleme("Erreur de création");
         R->nb_noeuds--;
         liberer_noeud(nd);
         return NULL;
@@ -197,8 +199,10 @@ Reseau *reconstitue_reseau_liste(Chaines *C) {
     }
 
     Reseau *reseau = cree_reseau(C->gamma);
-    if (!reseau)
+    if (!reseau) {
+        print_probleme("Erreur de création");
         return NULL;
+    }
 
     for (CellChaine *chaine = C->chaines; chaine; chaine = chaine->suiv) {
         Noeud *first = NULL, *last = NULL;
@@ -207,6 +211,7 @@ Reseau *reconstitue_reseau_liste(Chaines *C) {
             Noeud *noeud = recherche_cree_noeud_liste(reseau, point->x, point->y);
 
             if (!noeud) {
+                print_probleme("Erreur de création");
                 liberer_reseau(reseau);
                 return NULL;
             }
@@ -230,12 +235,14 @@ Reseau *reconstitue_reseau_liste(Chaines *C) {
 
                 CellNoeud *vn = cree_cell_noeud(last);
                 if (!vn) {
+                    print_probleme("Erreur de création");
                     liberer_reseau(reseau);
                     return NULL;
                 }
 
                 CellNoeud *vl = cree_cell_noeud(noeud);
                 if (!vl) {
+                    print_probleme("Erreur de création");
                     liberer_reseau(reseau);
                     free(vn);
                     return NULL;
@@ -255,6 +262,7 @@ Reseau *reconstitue_reseau_liste(Chaines *C) {
             CellCommodite *cmd = cree_cell_commodite(first, last);
 
             if (!cmd) {
+                print_probleme("Erreur de création");
                 liberer_reseau(reseau);
                 return NULL;
             }
@@ -280,16 +288,21 @@ Noeud *recherche_cree_noeud_hachage(Reseau *R, TableHachage *hash_table, double 
 
     Noeud *nd = cree_noeud(R->nb_noeuds + 1, x, y);
 
-    if (!nd) return NULL;
+    if (!nd) {
+        print_probleme("Erreur de création");
+        return NULL;
+    }
 
     CellNoeud *noeud_r = cree_cell_noeud(nd);
     if (!noeud_r) {
+        print_probleme("Erreur de création");
         liberer_noeud(nd);
         return NULL;
     }
 
     CellNoeud *noeud_h = cree_cell_noeud(nd);
     if (!noeud_r) {
+        print_probleme("Erreur de création");
         liberer_noeud(nd);
         free(noeud_r);
         return NULL;
@@ -312,7 +325,10 @@ Reseau *reconstitue_reseau_hachage(Chaines *C, TableHachage *table_hachage) {
     }
 
     Reseau *reseau = cree_reseau(C->gamma);
-    if (!reseau) return NULL;
+    if (!reseau) {
+        print_probleme("Erreur de création");
+        return NULL;
+    }
 
     for (CellChaine *chaine = C->chaines; chaine; chaine = chaine->suiv) {
         Noeud *first = NULL, *last = NULL;
@@ -321,6 +337,7 @@ Reseau *reconstitue_reseau_hachage(Chaines *C, TableHachage *table_hachage) {
             Noeud *noeud = recherche_cree_noeud_hachage(reseau, table_hachage, point->x, point->y);
 
             if (!noeud) {
+                print_probleme("Erreur de création");
                 liberer_reseau(reseau);
                 return NULL;
             }
@@ -344,12 +361,14 @@ Reseau *reconstitue_reseau_hachage(Chaines *C, TableHachage *table_hachage) {
 
                 CellNoeud *vn = cree_cell_noeud(last);
                 if (!vn) {
+                    print_probleme("Erreur de création");
                     liberer_reseau(reseau);
                     return NULL;
                 }
 
                 CellNoeud *vl = cree_cell_noeud(noeud);
                 if (!vl) {
+                    print_probleme("Erreur de création");
                     liberer_reseau(reseau);
                     free(vn);
                     return NULL;
@@ -369,6 +388,7 @@ Reseau *reconstitue_reseau_hachage(Chaines *C, TableHachage *table_hachage) {
             CellCommodite *cmd = cree_cell_commodite(first, last);
 
             if (!cmd) {
+                print_probleme("Erreur de création");
                 liberer_reseau(reseau);
                 return NULL;
             }
@@ -391,12 +411,16 @@ Noeud *recherche_cree_noeud_arbre(Reseau *R, ArbreQuat *arbre, ArbreQuat *parent
     if (noeud) return noeud;
 
     noeud = cree_noeud(R->nb_noeuds + 1, x, y);
-    if (!noeud) return NULL;
+    if (!noeud) {
+        print_probleme("Erreur de création");
+        return NULL;
+    }
 
     inserer_noeud_arbre(noeud, &arbre, parent);
 
     CellNoeud *noeud_r = cree_cell_noeud(noeud);
     if (!noeud_r) {
+        print_probleme("Erreur de création");
         liberer_noeud(noeud);
         return NULL;
     }
@@ -415,7 +439,10 @@ Reseau *reconstitue_reseau_arbre(Chaines *C, ArbreQuat *arbre) {
     }
 
     Reseau *reseau = cree_reseau(C->gamma);
-    if (!reseau) return NULL;
+    if (!reseau) {
+        print_probleme("Erreur de création");
+        return NULL;
+    }
 
     for (CellChaine *chaine = C->chaines; chaine; chaine = chaine->suiv) {
         Noeud *first = NULL, *last = NULL;
@@ -439,6 +466,7 @@ Reseau *reconstitue_reseau_arbre(Chaines *C, ArbreQuat *arbre) {
             Noeud *noeud = recherche_cree_noeud_arbre(reseau, sous_arbre, arbre, point->x, point->y);
 
             if (!noeud) {
+                print_probleme("Erreur de création");
                 liberer_reseau(reseau);
                 return NULL;
             }
@@ -462,12 +490,14 @@ Reseau *reconstitue_reseau_arbre(Chaines *C, ArbreQuat *arbre) {
 
                 CellNoeud *vn = cree_cell_noeud(last);
                 if (!vn) {
+                    print_probleme("Erreur de création");
                     liberer_reseau(reseau);
                     return NULL;
                 }
 
                 CellNoeud *vl = cree_cell_noeud(noeud);
                 if (!vl) {
+                    print_probleme("Erreur de création");
                     liberer_reseau(reseau);
                     free(vn);
                     return NULL;
@@ -487,6 +517,7 @@ Reseau *reconstitue_reseau_arbre(Chaines *C, ArbreQuat *arbre) {
             CellCommodite *cmd = cree_cell_commodite(first, last);
 
             if (!cmd) {
+                print_probleme("Erreur de création");
                 liberer_reseau(reseau);
                 return NULL;
             }

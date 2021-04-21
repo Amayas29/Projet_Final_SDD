@@ -31,6 +31,7 @@ int main(int argc, char **argv) {
 
     Chaines *chaines = lecture_chaines(file_reseau);
     if (!chaines) {
+        print_probleme("Erreur de création");
         fclose(file_reseau);
         fclose(file_comparaison);
         return 1;
@@ -51,6 +52,7 @@ int main(int argc, char **argv) {
     for (int i = 10; i < 20; i++) {
         table = cree_table_hachage(i * 1000);
         if (!table) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file_comparaison);
             return 1;
@@ -64,6 +66,7 @@ int main(int argc, char **argv) {
         liberer_table_hachage(table);
 
         if (!reseau) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file_comparaison);
             return 1;
@@ -79,6 +82,7 @@ int main(int argc, char **argv) {
 
         arbre = creer_arbre_quat((xmax + xmin) / 2, (ymax + ymin) / 2, cote_x, cote_y);
         if (!arbre) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file_comparaison);
             return 1;
@@ -92,6 +96,7 @@ int main(int argc, char **argv) {
         liberer_arbre(arbre);
 
         if (!reseau) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file_comparaison);
             return 1;
@@ -106,6 +111,7 @@ int main(int argc, char **argv) {
         temps_final = clock();
 
         if (!reseau) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file_comparaison);
             return 1;

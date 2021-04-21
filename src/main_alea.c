@@ -28,12 +28,14 @@ int main() {
     for (int i = 500; i <= 5000; i += 500) {
         chaines = generation_aleatoire(i, 100, 5000, 5000);
         if (!chaines) {
+            print_probleme("Erreur de création");
             fclose(file_comparaison);
             return 1;
         }
 
         table = cree_table_hachage(i * 100);
         if (!table) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file_comparaison);
             return 1;
@@ -47,6 +49,7 @@ int main() {
         liberer_table_hachage(table);
 
         if (!reseau) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file_comparaison);
             return 1;
@@ -62,6 +65,7 @@ int main() {
 
         arbre = creer_arbre_quat((xmax + xmin) / 2, (ymax + ymin) / 2, cote_x, cote_y);
         if (!arbre) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file_comparaison);
             return 1;
@@ -75,6 +79,7 @@ int main() {
         liberer_arbre(arbre);
 
         if (!reseau) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file_comparaison);
             return 1;
@@ -89,6 +94,7 @@ int main() {
         temps_final = clock();
 
         if (!reseau) {
+            print_probleme("Erreur de création");
             liberer_structure(chaines);
             fclose(file_comparaison);
             return 1;
