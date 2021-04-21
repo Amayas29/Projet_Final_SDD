@@ -6,15 +6,18 @@
 #include "commun.h"
 
 int main(int argc, char **argv) {
+    // On test les argument
     if (argc != 2) {
         fprintf(stderr,
                 "Usage: %s <filename>\n", argv[0]);
         return 1;
     }
 
+    // On supprime le nom du fichier en argument
     argc--;
     argv++;
 
+    // On ouvre le fichier de chaines
     FILE *file_reseau = fopen(argv[0], "r");
 
     if (!file_reseau) {
@@ -22,6 +25,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    // On crée le fichier des resultats
     FILE *file_comparaison = fopen("fichier_comparaison.compare.txt", "w");
     if (!file_comparaison) {
         print_probleme("Erreur d'ouverture du fichier");
@@ -29,6 +33,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    // On lit les chaines depuis le fichier
     Chaines *chaines = lecture_chaines(file_reseau);
     if (!chaines) {
         print_probleme("Erreur de création");
@@ -49,8 +54,11 @@ int main(int argc, char **argv) {
     ArbreQuat *arbre = NULL;
     TableHachage *table = NULL;
 
+    // Pour varier la taille de la table
     for (int i = 10; i < 20; i++) {
+        // On crée la table de hachage correspondante à l'iterartion i
         table = cree_table_hachage(i * 1000);
+
         if (!table) {
             print_probleme("Erreur de création");
             liberer_structure(chaines);
@@ -58,13 +66,15 @@ int main(int argc, char **argv) {
             return 1;
         }
 
-        //hach
+        // On calcule le temps de reconstitution avec hachage
         temps_initial = clock();
         reseau = reconstitue_reseau_hachage(chaines, table);
         temps_final = clock();
+        temps_cpu_hachage = ((double)(temps_final - temps_initial)) / CLOCKS_PER_SEC;
 
         liberer_table_hachage(table);
 
+        // Si on a eu une erreur de reconstitution on arrete le test
         if (!reseau) {
             print_probleme("Erreur de création");
             liberer_structure(chaines);
@@ -73,8 +83,8 @@ int main(int argc, char **argv) {
         }
 
         liberer_reseau(reseau);
-        temps_cpu_hachage = ((double)(temps_final - temps_initial)) / CLOCKS_PER_SEC;
 
+        // On creer l'arbre
         chaine_coord_min_max(chaines, &xmin, &ymin, &xmax, &ymax);
 
         cote_x = xmax - xmin;
@@ -88,13 +98,15 @@ int main(int argc, char **argv) {
             return 1;
         }
 
-        //arbre
+        // On calcule les temps avec l'arbre
         temps_initial = clock();
         reseau = reconstitue_reseau_arbre(chaines, arbre);
         temps_final = clock();
+        temps_cpu_arbre = ((double)(temps_final - temps_initial)) / CLOCKS_PER_SEC;
 
         liberer_arbre(arbre);
 
+        // Si on a eu une erreur de reconstitution on arrete le test
         if (!reseau) {
             print_probleme("Erreur de création");
             liberer_structure(chaines);
@@ -103,13 +115,14 @@ int main(int argc, char **argv) {
         }
 
         liberer_reseau(reseau);
-        temps_cpu_arbre = ((double)(temps_final - temps_initial)) / CLOCKS_PER_SEC;
 
-        //liste
+        // On calcule le temps de reconstitution avec la liste
         temps_initial = clock();
         reseau = reconstitue_reseau_liste(chaines);
         temps_final = clock();
+        temps_cpu_liste = ((double)(temps_final - temps_initial)) / CLOCKS_PER_SEC;
 
+        // Si on a eu une erreur de reconstitution on arrete le test
         if (!reseau) {
             print_probleme("Erreur de création");
             liberer_structure(chaines);
@@ -118,7 +131,6 @@ int main(int argc, char **argv) {
         }
 
         liberer_reseau(reseau);
-        temps_cpu_liste = ((double)(temps_final - temps_initial)) / CLOCKS_PER_SEC;
 
         // Ecriture dans le fichier
         fprintf(file_comparaison, "%d %f %f %f\n", i, temps_cpu_liste, temps_cpu_hachage, temps_cpu_arbre);

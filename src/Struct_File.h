@@ -12,6 +12,7 @@ typedef struct {
     Cellule_file *dernier; /* pointeur sur le dernier element de la liste */
 } S_file;
 
+/* Création de la file */
 S_file *cree_file();
 
 /* Initialisation d une file */

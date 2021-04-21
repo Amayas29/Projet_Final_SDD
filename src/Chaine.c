@@ -376,8 +376,8 @@ Chaines *generation_aleatoire(int nb_chaines, int nb_points_chaines, int xmax, i
             chaine_i->points = point_ij;
 
             // Inserer une valeur aleatoire pour le x et le y du point
-            point_ij->x = rand() % (xmax + 1);
-            point_ij->y = rand() % (ymax + 1);
+            point_ij->x = (double)rand() / (RAND_MAX)*xmax;
+            point_ij->y = (double)rand() / (RAND_MAX)*ymax;
         }
     }
 
