@@ -25,5 +25,6 @@ void desalloue(ListeEntier *L) {
         cour = cour->suiv;
         free(prec);
     }
+
     *L = NULL;
 }

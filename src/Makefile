@@ -22,7 +22,6 @@ ChaineMain : Chaine.o ChaineMain.o SVGwriter.o
 test_graphe : Struct_File.o Struct_Liste.o Graphe.o test_graphe.o Noeud.o Reseau.o Hachage.o Chaine.o SVGwriter.o ArbreQuat.o
 	$(CC) $(FLAGS) -o $@ $^ -lm
 
-
 ChaineMain.o : ChaineMain.c Chaine.h commun.h
 	$(CC) $(FLAGS) -c $<
 

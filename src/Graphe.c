@@ -88,31 +88,33 @@ Graphe *creer_graphe(Reseau *reseau) {
     return graphe;
 }
 
-int t(Graphe *graphe, int u, int v) {
+void generate_plus_petit_chaine(Graphe *graphe, int u, int v, ListeEntier *liste) {
+    init_liste(liste);
+
     u--;
     v--;
 
     if (!graphe) {
         print_probleme("Pointeur invalide");
-        return -1;
+        return;
     }
 
     if (u < 0 || u >= graphe->nb_som || v < 0 || v >= graphe->nb_som) {
         print_probleme("Sommet invalide");
-        return -1;
+        return;
     }
 
     int *visit = (int *)malloc(sizeof(int) * graphe->nb_som);
     if (!visit) {
         print_probleme("Erreur d'allocation");
-        return -1;
+        return;
     }
 
     int *pred = (int *)malloc(sizeof(int) * graphe->nb_som);
     if (!pred) {
         print_probleme("Erreur d'allocation");
         free(visit);
-        return -1;
+        return;
     }
 
     for (int i = 0; i < graphe->nb_som; i++) {
@@ -127,7 +129,7 @@ int t(Graphe *graphe, int u, int v) {
         print_probleme("Erreur de creation");
         free(visit);
         free(pred);
-        return -1;
+        return;
     }
 
     enfile(file, u);
@@ -147,18 +149,16 @@ int t(Graphe *graphe, int u, int v) {
     }
 
     int i = v;
-
     while (pred[i] != -1) {
-        printf("%d <-- ", i+1);
+        ajoute_en_tete(liste, i + 1);
         i = pred[i];
     }
 
-    printf("%d\n", u+1);
+    ajoute_en_tete(liste, u + 1);
 
     free(visit);
     free(pred);
     liberer_file(file);
-    return 0;
 }
 
 int plus_petit_nb_aretes(Graphe *graphe, int u, int v) {
@@ -306,4 +306,76 @@ void liberer_arete(Cellule_arete *arete) {
     }
 
     free(arete);
+}
+
+int reorganise_reseau(Reseau *reseau) {
+    if (!reseau) {
+        print_probleme("Pointeur invalide");
+        return 0;
+    }
+
+    Graphe *graphe = creer_graphe(reseau);
+    if (!graphe) {
+        print_probleme("Erreur de création");
+        return 0;
+    }
+
+    int **mat_chaines = (int **)malloc(sizeof(int *) * graphe->nb_som);
+    if (!mat_chaines) {
+        print_probleme("Erreur d'allocation");
+        liberer_graphe(graphe);
+        return 0;
+    }
+
+    for (int i = 0; i < graphe->nb_som; i++) {
+        mat_chaines[i] = (int *)malloc(sizeof(int) * graphe->nb_som);
+
+        if (!mat_chaines[i]) {
+            print_probleme("Erreur d'allocation");
+
+            for (int j = 0; j < i; j++)
+                free(mat_chaines[j]);
+
+            free(mat_chaines);
+            liberer_graphe(graphe);
+            return 0;
+        }
+
+        for (int j = 0; j < graphe->nb_som; j++)
+            mat_chaines[i][j] = 0;
+    }
+
+    ListeEntier liste;
+    for (int i = 0; i < graphe->nb_commod; i++) {
+        generate_plus_petit_chaine(graphe, graphe->T_commod[i].e1 + 1, graphe->T_commod[i].e2 + 1, &liste);
+
+        Cell_entier *pred = NULL;
+        for (Cell_entier *curr = liste; curr; pred = curr, curr = curr->suiv) {
+            if (pred) {
+                mat_chaines[curr->u - 1][pred->u - 1]++;
+                mat_chaines[pred->u - 1][curr->u - 1]++;
+
+                if (mat_chaines[curr->u - 1][pred->u - 1] > graphe->gamma) {
+                    for (int i = 0; i < graphe->nb_som; i++)
+                        free(mat_chaines[i]);
+
+                    free(mat_chaines);
+                    liberer_graphe(graphe);
+                    desalloue(&liste);
+
+                    return 0;
+                }
+            }
+        }
+
+        desalloue(&liste);
+    }
+
+    for (int i = 0; i < graphe->nb_som; i++)
+        free(mat_chaines[i]);
+
+    free(mat_chaines);
+
+    liberer_graphe(graphe);
+    return 1;
 }

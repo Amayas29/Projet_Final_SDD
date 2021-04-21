@@ -1,7 +1,7 @@
 #ifndef _STRUCT_LISTE_H
 #define _STRUCT_LISTE_H
 
-/* Structure d une file contenant un entier */
+/* Structure d une liste contenant un entier */
 
 typedef struct cell_entier {
     int u;
@@ -10,10 +10,10 @@ typedef struct cell_entier {
 
 typedef Cell_entier *ListeEntier;
 
-/* Initialisation d une file */
+/* Initialisation d une liste */
 void init_liste(ListeEntier *L);
 
-/* Teste si la file est vide */
+/* Teste si la liste est vide */
 int est_liste_vide(ListeEntier *L);
 
 /* Ajoute un element don`e en tete de liste */

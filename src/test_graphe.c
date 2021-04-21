@@ -33,14 +33,26 @@ int main() {
         return 1;
     }
 
-    int i = plus_petit_nb_aretes(graphe, 7, 8);
-    printf("%d\n", i);
+    ListeEntier liste;
 
-    t(graphe, 7, 8);
+    generate_plus_petit_chaine(graphe, 5, 11, &liste);
+
+    for (Cell_entier *curr = liste; curr; curr = curr->suiv) {
+        printf("%d", curr->u);
+        if (curr->suiv)
+            printf(" <-> ");
+    }
+    printf("\n");
+
+    desalloue(&liste);
+
+    int res = reorganise_reseau(reseau);
+    printf("%d \n", res);
 
     liberer_structure(chaines);
     liberer_reseau(reseau);
     liberer_graphe(graphe);
     fclose(file);
+
     return 0;
 }
