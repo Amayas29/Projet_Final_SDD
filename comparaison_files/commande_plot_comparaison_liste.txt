@@ -1,0 +1,4 @@
+plot "../src/fichier_comparaison.compare.txt" using 1:2 title 'Liste' with lines
+set term postscript portrait
+set output "comparaisons.ps"
+set size 0.7, 0.7

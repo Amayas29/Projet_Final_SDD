@@ -6,7 +6,7 @@
 #include "commun.h"
 
 int main() {
-    FILE *file_comparaison = fopen("fichier_comparaison.compare_alea.txt", "w");
+    FILE *file_comparaison = fopen("fichier_comparaison_alea.compare.txt", "w");
     if (!file_comparaison) {
         print_probleme("Erreur d'ouverture du fichier");
         return 1;
@@ -25,7 +25,7 @@ int main() {
     ArbreQuat *arbre = NULL;
     TableHachage *table = NULL;
 
-    for (int i = 500; i < 5000; i += 500) {
+    for (int i = 500; i <= 5000; i += 500) {
         chaines = generation_aleatoire(i, 100, 5000, 5000);
         if (!chaines) {
             fclose(file_comparaison);
