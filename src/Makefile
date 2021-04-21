@@ -19,7 +19,7 @@ ReconstitueReseau.o : ReconstitueReseau.c *.h
 ChaineMain : Chaine.o ChaineMain.o SVGwriter.o
 	$(CC) $(FLAGS) -o $@ $^ -lm
 
-test_graphe : Struct_File.o Graphe.o test_graphe.o Noeud.o Reseau.o Hachage.o Chaine.o SVGwriter.o ArbreQuat.o
+test_graphe : Struct_File.o Struct_Liste.o Graphe.o test_graphe.o Noeud.o Reseau.o Hachage.o Chaine.o SVGwriter.o ArbreQuat.o
 	$(CC) $(FLAGS) -o $@ $^ -lm
 
 
@@ -57,6 +57,9 @@ Struct_File.o : Struct_File.c Struct_File.h
 	$(CC) $(FLAGS) -c $<
 
 test_graphe.o : test_graphe.c *.h
+	$(CC) $(FLAGS) -c $<
+
+Struct_Liste.o : Struct_Liste.c Struct_Liste.h
 	$(CC) $(FLAGS) -c $<
 
 plot_comparaison: 
