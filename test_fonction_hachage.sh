@@ -8,3 +8,5 @@ max=$(./test_fonction_hachage | sed -En 's/.* .* = (.*)/\1/p' | sort -n -r | uni
 
 # affichage
 echo $max
+
+rm test_fonction_hachage.o test_fonction_hachage
