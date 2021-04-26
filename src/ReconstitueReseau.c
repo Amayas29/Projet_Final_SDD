@@ -43,11 +43,11 @@ int main(int argc, char *argv[]) {
         fclose(file);
         return 1;
     }
-
+    Reseau *reseau;
     // Premiere partie : Avec les liste
     if (number == 1) {
         // On reconstruit le reseau
-        Reseau *reseau = reconstitue_reseau_liste(chaines);
+        reseau = reconstitue_reseau_liste(chaines);
 
         // Si on a eu une erreur de reconstitution
         if (!reseau) {
@@ -64,7 +64,6 @@ int main(int argc, char *argv[]) {
             fclose(f);
         }
 
-        liberer_reseau(reseau);
     }
 
     // Deuxieme partie : Avec la table de hachage
@@ -79,7 +78,7 @@ int main(int argc, char *argv[]) {
         }
 
         // On reconstruit le reseau
-        Reseau *reseau = reconstitue_reseau_hachage(chaines, table);
+        reseau = reconstitue_reseau_hachage(chaines, table);
 
         liberer_table_hachage(table);
 
@@ -98,7 +97,6 @@ int main(int argc, char *argv[]) {
             fclose(f);
         }
 
-        liberer_reseau(reseau);
     }
 
     if (number == 3) {
@@ -121,7 +119,7 @@ int main(int argc, char *argv[]) {
         }
 
         // On reconstruit le reseau
-        Reseau *reseau = reconstitue_reseau_arbre(chaines, arbre);
+        reseau = reconstitue_reseau_arbre(chaines, arbre);
 
         liberer_arbre(arbre);
 
@@ -140,10 +138,12 @@ int main(int argc, char *argv[]) {
             fclose(f);
         }
 
-        liberer_reseau(reseau);
     }
 
+    affiche_reseau_SVG(reseau,"SVG_reseau");
     liberer_structure(chaines);
+    liberer_reseau(reseau);
+
     fclose(file);
     return 0;
 }
