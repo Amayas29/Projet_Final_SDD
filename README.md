@@ -289,15 +289,15 @@ Les graphique obtenus :
 
 ## Question 04
 
-- Pour le fichier `00014_burma.cha` : Dans ce fichier on a pas beaucoup de chaines et de points donc la liste des noeuds ne contient pas beaucoup de noeuds c'est pour cela que la recherche dans la liste n'est pas trop couteuse, parcontre avec les deux autres méthodes on effectue des calcules qui à petite echelle (petit nombre de points) sont desavantageux par rapport à la liste, et comme y a pas beaucoup de noeuds les temps de calcules des differentes méthode est presque le même 
+- Pour le fichier `00014_burma.cha` : Dans ce fichier on a pas beaucoup de chaines et de points donc la liste des noeuds ne contient pas beaucoup de noeuds c'est pour cela que la recherche dans la liste n'est pas trop couteuse, parcontre avec les deux autres méthodes on effectue des calcules qui à petite echelle (petit nombre de points) sont desavantageux par rapport à la liste, et comme y a pas beaucoup de noeuds les temps de calcules des differentes méthode est presque le même
 
-- Pour les fichiers `05000_USA-road-d-NY.cha` et `07397_pla.cha` : 
+- Pour les fichiers `05000_USA-road-d-NY.cha` et `07397_pla.cha` :
 
 On remarque dans ce cas que la méthode avec la liste est la plus mauvaise.
 
-Les algorithme de reconstitution sont les mêmes sauf dans la recherche donc ils auront le même nombre d'operation sauf lors de la recherche, et donc c'est que la recherche qui influent sur les temps de calcule, en effet la complexité de recherche avec les liste est de $O(nbChaine * nbPointChaine)$ ce qui est bien pire qu'une complexité de $O(log_4(nbChaine * nbPointChaine))$ pour la recherche avec la méthode des arbre et pire que $O(\alpha)$ pour la recherche en utilisation la table de hachage (avec $\alpha$ est le nombre moyen de noeuds dans une liste de la table)
+Les algorithme de reconstitution sont les mêmes sauf dans la recherche, et donc c'est que la recherche qui influent sur les temps de calcule, en effet la complexité de recherche avec les liste est de `$O(nbChaine * nbPointChaine)$` car au pire cas on parcours toute les noeuds ce qui est bien pire qu'une complexité de `$O(log_4(nbChaine * nbPointChaine))$` pour la recherche avec la méthode des arbre vu que les noueds sont positionner selon leurs coordonnees dans un arbre de quatre noeuds, et pire que $O(\alpha)$ pour la recherche en utilisation la table de hachage (avec $\alpha$ est le nombre moyen de noeuds dans une liste de la table) ou on accede directement a la position du noeud on calculant sa cle avec la fonction de hachage.
 
-- Pour la `generation_aleatoire` : 
+- Pour la `generation_aleatoire` :
   
 C'est la même analyse qu'avec les fichiers `05000_USA-road-d-NY.cha` et `07397_pla.cha`
 
@@ -305,7 +305,7 @@ C'est la même analyse qu'avec les fichiers `05000_USA-road-d-NY.cha` et `07397_
 
 ## Question 01
 
-`Graphe *creer_graphe(Reseau *reseau)` : Alloue la memoire pour le graphe et les differents sommets et aretes, tout en recopiant les commodites dans le tableau de commodites du graphe et en parcourant la liste des noeuds pour fabriquer les sommets et leur chainage
+`Graphe *creer_graphe(Reseau *reseau)` : Alloue la memoire pour le graphe et les differents sommets et aretes, tout en recopiant les commodites dans le tableau de commodites du graphe et en parcourant la liste des noeuds pour fabriquer les sommets et leur chainage(les aretes)
 
 ## Question 02
 
@@ -313,13 +313,13 @@ C'est la même analyse qu'avec les fichiers `05000_USA-road-d-NY.cha` et `07397_
 
 ## Question 03
 
-`void generate_plus_petit_chaine(Graphe *graphe, int u, int v, ListeEntier *liste)` : L'idée et de garder dans une liste d'entier les numéros des sommets qui represente la chaine depuis le sommet u jusqu'au sommet v, et donc au lieu de garder le nombre d'aretes parcourues on garde le sommet d'ou on vient ainsi à la fin en faisant un parcours inverse on recupere le chemin le plus court de u vers v
+`void generate_plus_petit_chaine(Graphe *graphe, int u, int v, ListeEntier *liste)` : L'idée et de garder dans une liste d'entier les numéros des sommets qui represente la chaine depuis le sommet u jusqu'au sommet v, et donc au lieu de garder le nombre d'aretes parcourues on garde le sommet d'ou on vient ainsi à la fin en faisant un parcours inverse on recupere le chemin le plus court de u vers v (le sommet v est l'indice de la case, le sommet u est la valeur de la case et on fait un parcours inverse et on s'arrete lorsqu'on trouve la valeur -1)
 
 - NB : On a choisis de donner une liste en parametre avec un passage par adresse pour direcement la changer au lieu de créer une autre et la retourner
 
 ## Question 04
 
-`int reorganise_reseau(Reseau *reseau)` : Permet de savoir si un réseau est bien repartie (càd : Que on a au max gamma commodites passant par une aretes) en utilisant le graphe et une matrice sommet-sommet pour calculer le nombre de fois qu'on passe par unr arete a qui est entre les sommet i et j donc on voit la valeur de la case `mat[i][j]` : 
+`int reorganise_reseau(Reseau *reseau)` : Permet de savoir si un réseau est bien repartie (càd : Que on a au max gamma commodites passant par une aretes) en utilisant le graphe et une matrice sommet-sommet pour calculer le nombre de fois qu'on passe par une arete a qui est entre les sommet i et j donc on voit la valeur de la case `mat[i][j]` :
 
 ```'
 mat[i][j] : represente le nombre de  fois qu'on a passé par l'arete ij
@@ -328,7 +328,7 @@ et donc si existe un i et j tel que mat[i][j] > gamma alors le reseau n'est pas 
 
 ## Question 05
 
-- Pour les fichier fournie càd `00014_burma.cha`, `05000_USA-road-d-NY.cha` et `07397_pla.cha` : On a toujours un resultat de `0` donc les reseaux correspondants ne sont pas bien organisés 
+- Pour les fichier fournie càd `00014_burma.cha`, `05000_USA-road-d-NY.cha` et `07397_pla.cha` : On a toujours un resultat de `0` donc les reseaux correspondants ne sont pas bien organisés
 
-- Solution pour améliorer la fonction : 
+- Solution pour améliorer la fonction :
     pass
