@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
         }
 
         // On crée le fichier de sortie : Ou on va ecrire le reseau reconstruit
-        FILE *f = fopen("Test.liste.log", "w");
+        FILE *f = fopen("Test.liste.res", "w");
         if (f) {
             ecrire_reseau(reseau, f);
             fclose(f);
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
         }
 
         // On crée le fichier de sortie : Ou on va ecrire le reseau reconstruit
-        FILE *f = fopen("Test.hash.log", "w");
+        FILE *f = fopen("Test.hash.res", "w");
         if (f) {
             ecrire_reseau(reseau, f);
             fclose(f);
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
         }
 
         // On crée le fichier de sortie : Ou on va ecrire le reseau reconstruit
-        FILE *f = fopen("Test.arbre.log", "w");
+        FILE *f = fopen("Test.arbre.res", "w");
         if (f) {
             ecrire_reseau(reseau, f);
             fclose(f);

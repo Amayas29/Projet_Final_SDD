@@ -70,4 +70,4 @@ plot_comparaison_alea:
 	gnuplot -p < ../comparaison_files/commande_plot_comparaison_alea_liste.txt
 
 clean:
-	rm -f *.o $(PROGS) *.html *.log *.compare.txt *.ps
+	rm -f *.o $(PROGS) *.html *.log *.compare.txt *.ps *.cha *.res
