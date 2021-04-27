@@ -25,11 +25,11 @@ La fonction `Chaines *lecture_chaines(FILE *file)` permet de lire la structure d
 
 - Affichage avant l'utilisation de la fonction d'ecriture
 
-![Affichage avant l'utilisation de la fonction d'ecriture](images/SVG_chaine_avant_l'utilisation_de_la_fonction_d'ecriture.png)
+![Chaines avant](images/chaines_avant.png)
 
 - Affichage aprés l'utilisation de la fonction d'ecriture
 
-![Affichage aprés l'utilisation de la fonction d'ecriture](images/SVG_chaine_apres_l'utilisation_de_la_fonction_d'ecriture.png)
+![Chaines apres](images/chaines_apres.png)
 
 ## Question 03
 
@@ -295,7 +295,7 @@ Les graphique obtenus :
 
 On remarque dans ce cas que la méthode avec la liste est la plus mauvaise.
 
-Les algorithme de reconstitution sont les mêmes sauf dans la recherche, et donc c'est que la recherche qui influent sur les temps de calcule, en effet la complexité de recherche avec les liste est de `$O(nbChaine * nbPointChaine)$` car au pire cas on parcours toute les noeuds ce qui est bien pire qu'une complexité de `$O(log_4(nbChaine * nbPointChaine))$` pour la recherche avec la méthode des arbre vu que les noueds sont positionner selon leurs coordonnees dans un arbre de quatre noeuds, et pire que $O(\alpha)$ pour la recherche en utilisation la table de hachage (avec $\alpha$ est le nombre moyen de noeuds dans une liste de la table) ou on accede directement a la position du noeud on calculant sa cle avec la fonction de hachage.
+Les algorithme de reconstitution sont les mêmes sauf dans la recherche, et donc c'est que la recherche qui influent sur les temps de calcule, en effet la complexité de recherche avec les liste est de `$O(nbChaine * nbPointChaine)$` car au pire cas on parcours touts les noeuds ce qui est bien pire qu'une complexité de `$O(log_4(nbChaine * nbPointChaine))$` pour la recherche avec la méthode des arbre vu que les noeuds sont positionnés selon leurs coordonnees dans un arbre de quatre fils, et pire que $O(\alpha)$ pour la recherche en utilisant la table de hachage (avec $\alpha$ est le nombre moyen de noeuds dans une liste de la table) où on accede directement à la position du noeud on calculant sa clé avec la fonction de hachage.
 
 - Pour la `generation_aleatoire` :
   
