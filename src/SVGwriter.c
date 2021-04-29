@@ -4,7 +4,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "commun.h"
+
 void SVG_init(SVGwriter *svg, char *nom, int sizeX, int sizeY) {
+    if (!svg) {
+        print_probleme("Pointeur invalide");
+        return;
+    }
+
     char filename[100];
 
     strcpy(filename, nom);
@@ -50,28 +57,58 @@ void SVG_init(SVGwriter *svg, char *nom, int sizeX, int sizeY) {
 }
 
 void SVG_line_color(SVGwriter *svg, char *col) {
+    if (!svg || !col) {
+        print_probleme("Pointeur invalide");
+        return;
+    }
+
     strcpy(svg->line_color, col);
 }
 
 void SVG_line_rand_color(SVGwriter *svg) {
+    if (!svg) {
+        print_probleme("Pointeur invalide");
+        return;
+    }
+
     int i;
     for (i = 1; i <= 6; i++) svg->line_color[i] = svg->gencol[rand() % 16];
 }
 
 void SVG_point_color(SVGwriter *svg, char *col) {
+    if (!svg || !col) {
+        print_probleme("Pointeur invalide");
+        return;
+    }
+
     strcpy(svg->point_color, col);
 }
 
 void SVG_point(SVGwriter *svg, double x, double y) {
+    if (!svg) {
+        print_probleme("Pointeur invalide");
+        return;
+    }
+
     fprintf(svg->file, "<circle cx=\"%lf\" cy=\"%lf\" r=\"2\" stroke=\"%s\" stroke-width=\"1\" fill=\"%s\" />\n", x, y, svg->point_color, svg->point_color);
 }
 
 void SVG_line(SVGwriter *svg, double xa, double ya, double xb, double yb) {
+    if (!svg) {
+        print_probleme("Pointeur invalide");
+        return;
+    }
+
     fprintf(svg->file, "<line x1=\"%lf\" y1=\"%lf\" x2=\"%lf\" y2=\"%lf\" ", xa, ya, xb, yb);
     fprintf(svg->file, " style=\"stroke:%s;stroke-width:2\"/>\n", svg->line_color);
 }
 
 void SVG_finalize(SVGwriter *svg) {
+    if (!svg) {
+        print_probleme("Pointeur invalide");
+        return;
+    }
+
     fprintf(svg->file, "\n\n</g></svg></body></html>\n");
     fclose(svg->file);
     svg->file = NULL;

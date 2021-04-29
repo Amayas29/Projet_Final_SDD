@@ -9,6 +9,12 @@
 
 ---
 
+On a testé tout les pointeurs et on a traité tout probleme qui risque de se generer, de plus on a codé un systeme de `traceback` pour bien localisé les problemes (en utilisant la fonction `print_probleme`)
+
+Voici un exemple du `traceback` : `reconstitue_reseau_hachage` avec une table de hachage `NULL`
+
+![traceback](images/traceback.png)
+
 # Exercice 01
 
 ## Question 01

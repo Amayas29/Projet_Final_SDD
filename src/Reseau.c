@@ -153,6 +153,11 @@ int nb_commodites(Reseau *R) {
 
 // Permet d'afficher le reseau
 void affiche_reseau_SVG(Reseau *R, char *nom_instance) {
+    if (!R || !nom_instance) {
+        print_probleme("Pointeur invalide");
+        return;
+    }
+
     CellNoeud *courN, *courv;
     SVGwriter svg;
     double maxx = 0, maxy = 0, minx = 1e6, miny = 1e6;

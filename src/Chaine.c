@@ -179,6 +179,11 @@ void ecrire_chaines(Chaines *C, FILE *file) {
 
 /* Permet de construire un fichier svg représentant la structure de chaines */
 void affiche_chaines_SVG(Chaines *C, char *nom_instance) {
+    if (!C || !nom_instance) {
+        print_probleme("Pointeur invalide");
+        return;
+    }
+
     double maxx = 0, maxy = 0, minx = 1e6, miny = 1e6;
     double precx, precy;
 
@@ -234,6 +239,11 @@ static double distance_points(CellPoint *p1, CellPoint *p2) {
 
 /* Calcule la longeur physique d'une chaine */
 double longueur_chaine(CellChaine *C) {
+    if (!C) {
+        print_probleme("Pointeur invalide");
+        return 0;
+    }
+
     CellPoint *pred = NULL;
     double longeur = 0;
 
@@ -248,6 +258,11 @@ double longueur_chaine(CellChaine *C) {
 
 /* Calcule la longeur physique totales des chaines */
 double longueur_totale(Chaines *C) {
+    if (!C) {
+        print_probleme("Pointeur invalide");
+        return -1;
+    }
+
     double total = 0;
 
     // On parcours toutes les chaines et on somme leurs longeur
@@ -257,6 +272,11 @@ double longueur_totale(Chaines *C) {
 
 /* Calcule le nombre de points d'une chaine */
 int compte_points_chaines(CellChaine *C) {
+    if (!C) {
+        print_probleme("Pointeur invalide");
+        return -1;
+    }
+
     int nb_points = 0;
 
     /* On calucle le nombre de points */
@@ -266,6 +286,11 @@ int compte_points_chaines(CellChaine *C) {
 
 /* Calcule le nombre totale de points de la structure des chaines */
 int compte_points_total(Chaines *C) {
+    if (!C) {
+        print_probleme("Pointeur invalide");
+        return -1;
+    }
+
     int total = 0;
 
     // On somme le nombre de points cahque chaine pour avoir le nombre de du graphe

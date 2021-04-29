@@ -17,15 +17,30 @@ S_file *cree_file() {
 }
 
 void init_file(S_file *f) {
+    if (!f) {
+        print_probleme("Pointeur invalide");
+        return;
+    }
+
     f->tete = NULL;
     f->dernier = NULL;
 }
 
 int est_file_vide(S_file *f) {
+    if (!f) {
+        print_probleme("Pointeur invalide");
+        return -1;
+    }
+
     return f->tete == NULL;
 }
 
 void enfile(S_file *f, int donnee) {
+    if (!f) {
+        print_probleme("Pointeur invalide");
+        return;
+    }
+
     Cellule_file *nouv = (Cellule_file *)malloc(sizeof(Cellule_file));
     nouv->val = donnee;
     nouv->suiv = NULL;
@@ -37,6 +52,11 @@ void enfile(S_file *f, int donnee) {
 }
 
 int defile(S_file *f) {
+    if (!f) {
+        print_probleme("Pointeur invalide");
+        return -1;
+    }
+
     int v = f->tete->val;
     Cellule_file *temp = f->tete;
     if (f->tete == f->dernier)

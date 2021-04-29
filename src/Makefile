@@ -28,7 +28,7 @@ ChaineMain.o : ChaineMain.c Chaine.h commun.h
 Chaine.o : Chaine.c SVGwriter.h Chaine.h commun.h
 	$(CC) $(FLAGS) -c $<
 
-SVGwriter.o : SVGwriter.c SVGwriter.h 
+SVGwriter.o : SVGwriter.c SVGwriter.h commun.h
 	$(CC) $(FLAGS) -c $<
 
 Reseau.o : Reseau.c Chaine.h commun.h Reseau.h Noeud.h Hachage.h
@@ -52,7 +52,7 @@ main_alea.o: main_alea.c *.h
 Graphe.o : Graphe.c *.h
 	$(CC) $(FLAGS) -c $<
 
-Struct_File.o : Struct_File.c Struct_File.h
+Struct_File.o : Struct_File.c Struct_File.h commun.h
 	$(CC) $(FLAGS) -c $<
 
 test_graphe.o : test_graphe.c *.h
