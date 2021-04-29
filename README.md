@@ -331,4 +331,196 @@ et donc si existe un i et j tel que mat[i][j] > gamma alors le reseau n'est pas 
 - Pour les fichier fournie càd `00014_burma.cha`, `05000_USA-road-d-NY.cha` et `07397_pla.cha` : On a toujours un resultat de `0` donc les reseaux correspondants ne sont pas bien organisés
 
 - Solution pour améliorer la fonction :
-    pass
+
+L'idée est d'ajoute un attribut `nb_fois_passe` à la structure `Arete` *(Vu que on ne dupplique pas les arrête, on dupplique juste les `Cellule_arete`, donc on a toujours le même pointeur) et à la création des `Arete` on initilise le champs à 0.
+
+Le `nb_fois_passe` represente le nombre de fois qu'on passe par l'arete dans les plus petit chemin des commodites
+
+Ensuite la fonction `generate_plus_petit_chaine` changera en `ìnt generate_plus_petit_chaine(Graphe *graphe, int u, int v, ListeEntier *liste)`, elle genere la liste d'aretes parcourues et actualise le champs `nb_fois_passe` de plus elle retourne le nombre max de `nb_fois_passe` des aretes parcourues, donc il ne reste que à tester le nombre retourner si il est superieur à `gamma` pas besoin de parcourire
+
+Voici une premiere implementation de l'idée : 
+
+- La nouvelle structure de `Arete` : 
+
+```c
+typedef struct {
+    int u, v; /* Numeros des sommets extremité */
+    int nb_fois_passe; /* Le nombre de fois qu'on passe par l'arete dans les plus petit chemin des commodites */
+} Arete;
+```
+
+- La fonction `generate_plus_petit_chaine` : 
+
+```c
+/* Retourne un liste de numeros de sommets de la plus courte chaine entre deux sommets */
+int generate_plus_petit_chaine(Graphe *graphe, int u, int v, ListeEntier *liste) {
+    // On initialise la liste a null
+    init_liste(liste);
+
+    // On soustrait -1 des numero de sommets (indice du tableau commence par 0)
+    u--;
+    v--;
+    // Si le graphe est null on retourne directement (On sort de la fonction)
+    if (!graphe) {
+        print_probleme("Pointeur invalide");
+        return -1;
+    }
+
+    // Si les numero de sommet depasse le numero max on sort de la fonction
+    if (u < 0 || u >= graphe->nb_som || v < 0 || v >= graphe->nb_som) {
+        print_probleme("Sommet invalide");
+        return -1;
+    }
+
+    // On cree un tableau de boolean,(Si la case est 0 donc le sommet n'est pas encore visté)
+    int *visit = (int *)malloc(sizeof(int) * graphe->nb_som);
+
+    // On teste si l'allocation du tableau s'est bien passé
+    if (!visit) {
+        print_probleme("Erreur d'allocation");
+        return -1;
+    }
+    // On cree un tableau de predecesseur
+    //( si la case dont l'indice est le numero du sommet est a -1 donc elle n'a pas de predecesseur, sinon son predecesseur a pour numero de sommet la valeur de la case)
+    // on l'utilise pour tracer un chemin entre deux sommets
+    int *pred = (int *)malloc(sizeof(int) * graphe->nb_som);
+
+    // On teste si l'allocation du tableau s'est bien passé
+    if (!pred) {
+        print_probleme("Erreur d'allocation");
+        free(visit);
+        return -1;
+    }
+
+    // Tableau d'aretes ou sont passé les commodite
+    Arete **tab_arete = (Arete **) malloc(sizeof(Arete *) * graphe->nb_som);
+
+    // Test d'allocation
+    if (!tab_arete) {
+        print_probleme("Erreur d'allocation");
+        free(pred);
+        free(visit);
+        return -1;
+    }
+
+    // On initialise les cases des trois tableau (pred a -1, visit a 0 et tab_arete a NULL)
+    for (int i = 0; i < graphe->nb_som; i++) {
+        visit[i] = 0;
+        pred[i] = -1;
+        tab_arete[i] = NULL;
+    }
+
+    // On met la valeur du premier sommet qui est `U` a 1
+    visit[u] = 1;
+
+    // On cree une file
+    // Elle sert a stoquer les somets qui ne sont pas encore visité et qui doivent etre visité
+    // A chaque fois on defile un sommets pour le parcourir et o enfile les sommets adjacents
+    S_file *file = cree_file();
+
+    // On teste si la file est bien allouer
+    if (!file) {
+        print_probleme("Erreur de creation");
+        free(visit);
+        free(pred);
+        free(tab_arete);
+        return -1;
+    }
+
+    // On enfile le premier sommet pour le parcourir
+    enfile(file, u);
+
+    // Tant qu'il existe encore des sommets qu'on doit parcourir
+    while (!est_file_vide(file)) {
+        // On defile le sommet a parcourir
+        int curr = defile(file);
+
+        // On boucle sur sa liste d'adjacents
+        for (Cellule_arete *voisins = graphe->T_som[curr]->L_voisin; voisins; voisins = voisins->suiv) {
+            // On recupere le numero du sommet adjacent
+            int pos = voisins->a->u == curr ? voisins->a->v : voisins->a->u;
+
+            // Si il n'st pas encore visiter
+            if (visit[pos] == 0) {
+                // On met le boolean a 1 pour ne pas l'ajouter une deuxieme fois
+                visit[pos] = 1;
+                enfile(file, pos);
+
+                // On garde le precedent
+                pred[pos] = curr;
+
+                // On garde l'arete
+                tab_arete[pos] = voisins->a;
+            }
+        }
+    }
+
+    int i = v;
+    int max = 0;
+
+    // On fait le parcours inverse pour recuperer le chemin
+    while (pred[i] != -1) {
+        tab_arete[i]->nb_fois_passe++;
+
+        if(tab_arete[i]->nb_fois_passe > max)
+            max = tab_arete[i]->nb_fois_passe;
+
+        ajoute_en_tete(liste, i + 1);
+        i = pred[i];
+    }
+
+    ajoute_en_tete(liste, u + 1);
+
+    free(visit);
+    free(pred);
+    liberer_file(file);
+
+    for(int i  = 0;i< graphe->nb_som; i++)
+        liberer_arete(tab_arete[i]);
+
+    free(tab_arete);
+
+    return max;
+}
+```
+
+- La fonction `reorganise_reseau` : 
+
+```c
+int reorganise_reseau(Reseau *reseau) {
+    // Si le reseau est null on sort de la fonction
+    if (!reseau) {
+        print_probleme("Pointeur invalide");
+        return 0;
+    }
+
+    // On cree un graphe et on teste l'allocation
+    Graphe *graphe = creer_graphe(reseau);
+    if (!graphe) {
+        print_probleme("Erreur de création");
+        return 0;
+    }
+
+
+    ListeEntier liste;
+    int max = -1;
+
+    for (int i = 0; i < graphe->nb_commod; i++) {
+
+        // On generer le chemin ainsi que le max des fois parcourus
+        max = generate_plus_petit_chaine(graphe, graphe->T_commod[i].e1 + 1, graphe->T_commod[i].e2 + 1, &liste);
+
+        // On libere la liste (On a pas besoin vu que on a le max)
+        desalloue(&liste);
+
+        // Si le max est superieur à gamma donc le reseau n'est pas organisés
+        if (max > gamma) {
+            liberer_graphe(graphe);
+            return 0;
+        }
+    }
+
+    liberer_graphe(graphe);
+    return 1;
+}
+```
