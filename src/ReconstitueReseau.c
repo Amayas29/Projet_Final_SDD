@@ -28,8 +28,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // On ouvre le fichier (Il doit pas avoir l'exstension cha On la rajoute dans le main)
-    char *filename = strcat(argv[0], ".cha");
+    // On ouvre le fichier
+    char *filename = argv[0];
     FILE *file = fopen(filename, "r");
     if (!file) {
         fprintf(stderr, "Le fichier %s n'existe pas\n", filename);
@@ -63,7 +63,6 @@ int main(int argc, char *argv[]) {
             ecrire_reseau(reseau, f);
             fclose(f);
         }
-
     }
 
     // Deuxieme partie : Avec la table de hachage
@@ -96,7 +95,6 @@ int main(int argc, char *argv[]) {
             ecrire_reseau(reseau, f);
             fclose(f);
         }
-
     }
 
     if (number == 3) {
@@ -137,10 +135,9 @@ int main(int argc, char *argv[]) {
             ecrire_reseau(reseau, f);
             fclose(f);
         }
-
     }
 
-    affiche_reseau_SVG(reseau,"SVG_reseau");
+    affiche_reseau_SVG(reseau, "SVG_reseau");
     liberer_structure(chaines);
     liberer_reseau(reseau);
 

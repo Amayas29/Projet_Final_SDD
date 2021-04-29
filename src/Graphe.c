@@ -40,8 +40,8 @@ Graphe *creer_graphe(Reseau *reseau) {
     // Si l'allocation s'est pas passée on libere la memoire allouer dans la fonction et on retourne null
     if (!graphe->T_som) {
         print_probleme("Erreur d'allocation");
-        free(graphe);
         free(graphe->T_commod);
+        free(graphe);
         return NULL;
     }
 

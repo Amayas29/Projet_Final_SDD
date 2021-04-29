@@ -81,9 +81,9 @@ int compte_points_chaines(CellChaine *C) {
 
 ## Question 03
 
-Le main du fichier `ReconstitueReseau.c` prend en parametre un nom de fichier sans extension et le numéro de la méthode à utiliser
+Le main du fichier `ReconstitueReseau.c` prend en parametre un nom de fichier et le numéro de la méthode à utiliser
 
-Le main ouvre le fichier en lui ajoutant l'extension `.cha` et selectionne la structure correspondante :
+Le main ouvre le fichier et selectionne la structure correspondante :
 
     1- pour les listes
     2- pour la table de hachage
